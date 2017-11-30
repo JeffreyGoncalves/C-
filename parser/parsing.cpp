@@ -62,21 +62,18 @@ void parseFile(char* filename)
 			//7ème ligne : couleur fond
 			//8ème ligne et plus : position des objets de la scène, centre de la sphère, son rayon, sa couleur en RGB, son indice de reflexion
 			
-			if(currentLine[0] == '#' || !currentLine.compare(""))
-			{
-				//Ne rien faire si c'est un commentaire commencant par #
-				//Ou une ligne vide
-			}
-			
 			//On remplacera les cout par des operations de parsage (type atoi, etc...)
 			//et on retournera une erreur si ce qui est attendu ne correspond pas a
 			//ce qui a ete transmis.
-			else
+			
+			//Ne rien faire si c'est un commentaire commencant par #
+			//ou une ligne vide
+			if(!(currentLine[0] == '#') && currentLine.compare(""))
 			{
 				tokens = split(currentLine, " :,");
 				
 				//Purement pour voir si tout fonctionne
-				for(int i=0; i<tokens.size(); i++)
+				for(unsigned int i=0; i<tokens.size(); i++)
 					cout << tokens[i] << endl;
 				///////////////////////////////////////
 				
