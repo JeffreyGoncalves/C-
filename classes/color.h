@@ -1,3 +1,6 @@
+#ifndef COLOR_H
+#define COLOR_H
+
 #include <iostream>
 #include <cstdio>
 #include <ctime> 
@@ -14,3 +17,5 @@ public:
 	int getGreen();
 	int getBlue();
 };
+
+#endif

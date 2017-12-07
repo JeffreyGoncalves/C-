@@ -1,10 +1,5 @@
 #include "color.h"
 
-int main(){
-
-	return 0;
-}
-
 Color::Color(int r, int g, int b){
 
 	if((r>0 && r<256) && (g>0 && g<256) && (b>0 && b<256)){

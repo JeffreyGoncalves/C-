@@ -1,34 +1,22 @@
 #include "sphere.h"
-
-int main(){
-
-	return 0;
-}
  
-Sphere::Sphere(int x, int y, int z, int r, Color C, float ref){
+Sphere::Sphere(float x, float y, float z, float r, Color C, float ref) : Object3D(C, ref), center(x,y,z), radius(r) {}
 
-	centerx = x;
-	centery = y;
-	centerz = z;
-	radius = r;
-	rgb = C;
-	reflexion = ref;
+Sphere::Sphere() : Object3D(), center(), radius(0.f) {}
+
+void Sphere::setCenter(float x, float y, float z){
+
+	Point3D new_center(x,y,z);
+	center = new_center;
 }
 
-Sphere::Sphere(){
-
-	centerx =0;
-	centery = 0;
-	centerz = 0;
-	radius = 0;
-	rgb = new Color();
-	reflexion = 0.0;
+void Sphere::setCenter(Point3D new_center)
+{
+	center = new_center;
 }
 
-void Sphere::setCenter(int x, int y, int z){
-
-	centerx = x;
-	centery = y;
-	centerz = z;
+//Permet de detecter le contact d'un rayon avec la sphere
+Point3D* Sphere::detectCollision(Point3D rayOrigin, Point3D rayDirection)
+{
+	return NULL;
 }
-
