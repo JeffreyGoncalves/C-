@@ -13,7 +13,13 @@ vec3D::vec3D(Point3D A, Point3D B)
 	this->y_vec = y_B - y_A;
 	this->z_vec = z_B - z_A;
 }
- 
+
+vec3D::vec3D(const vec3D &vectToCopy)
+{
+	this->x_vec = vectToCopy.x_vec;
+	this->y_vec = vectToCopy.y_vec;
+	this->z_vec = vectToCopy.z_vec;
+}
 //////////Getters///////////
 double const& vec3D::getXCoor() const
 {
@@ -68,6 +74,38 @@ vec3D vec3D::normalize()
 	return this->times(1.d/this->getNorm());
 }
 ////////////////////////////
+
+///////Surcharge de +=, +, -= et -///////
+vec3D vec3D::operator+= (const vec3D &v)
+{
+	this->x_vec += v.x_vec;
+	this->y_vec += v.y_vec;
+	this->z_vec += v.z_vec;
+	
+	return *this;
+}
+
+vec3D vec3D::operator-= (const vec3D &v)
+{
+	this->x_vec -= v.x_vec;
+	this->y_vec -= v.y_vec;
+	this->z_vec -= v.z_vec;
+	
+	return *this;
+}
+
+vec3D vec3D::operator+ (const vec3D &v)
+{
+	vec3D toReturn(*this);
+	return toReturn += v;
+}
+
+vec3D vec3D::operator- (const vec3D &v)
+{
+	vec3D toReturn(*this);
+	return toReturn -= v;
+}
+/////////////////////////////////////////
 
 ///////Surcharge de <<//////
 std::ostream& operator<< (std::ostream &os, const vec3D &v)

@@ -12,6 +12,7 @@ class vec3D
 		vec3D();
 		vec3D(double x, double y, double z);
 		vec3D(Point3D A, Point3D B);				//Calcul d'un vecteur grace a deux points
+		vec3D(const vec3D &vectToCopy);				//Constructeur par copie
 		///////////////
 		//Getters
 		double const& getXCoor() const;
@@ -19,11 +20,17 @@ class vec3D
 		double const& getZCoor() const;
 		double getNorm();				//Donne la norme du vecteur
 		///////////////
-		//Operations (on n'effectue pas de surcharge d'operateur car ambigue entre produit scalaire et vectoriel)
+		//Operations (on n'effectue pas de surcharge d'operateur (pour *) car ambigue entre produit scalaire et vectoriel)
 		double dot(const vec3D &v);		//Represente le produit scalaire
 		vec3D cross(const vec3D &v); 	//Represente le produit vectoriel
 		vec3D times(const double &d);	//Represente le produit entre un vec3D et un scalaire
 		vec3D normalize();				//Normalise le vecteur et renvoie celle ci en copie
+		///////////////
+		//Redefinition des operateurs +=, -=, + et -
+		vec3D operator+= (const vec3D &v);
+		vec3D operator-= (const vec3D &v);
+		vec3D operator+ (const vec3D &v);
+		vec3D operator- (const vec3D &v);
 		///////////////
 		//Surcharge des operateurs <<
 		friend std::ostream& operator<< (std::ostream &os, const vec3D &v);
