@@ -15,7 +15,7 @@ class Object3D
 		//Constructeurs
 		Object3D();
 		Object3D(Color C, float ref);
-		//virtual ~Object3D() = 0;
+		virtual ~Object3D();
 		///////////////
 		virtual Point3D* detectCollision(ray3D ray) = 0;				//Detecte si le rayon ray rentre en contact avec la surface de l'Object3D
 		virtual vec3D calcNormToPoint(Point3D p) = 0;					//Calcule la normale au point a la surface de l'Object3D
