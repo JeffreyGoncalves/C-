@@ -1,0 +1,1 @@
+g++ -o test main.cpp vec3D.cpp Point3D.cpp ray3D.cpp Object3D.cpp sphere.cpp color.cpp -Wall -ansi

@@ -2,7 +2,7 @@
 
 Color::Color(int r, int g, int b){
 
-	if((r>0 && r<256) && (g>0 && g<256) && (b>0 && b<256)){
+	if((r>=0 && r<256) && (g>=0 && g<256) && (b>=0 && b<256)){
 
 		red = r;
 		green = g;
