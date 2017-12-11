@@ -10,6 +10,10 @@ class Point3D
 		///////////////
 		Point3D();
 		Point3D(double x_coor, double y_coor, double z_coor);
+
+		//Setter
+		////////////////
+		void setPoint(double x_coor, double y_coor, double z_coor);
 		//Getters
 		///////////////
 		double const& getXCoor() const;
@@ -17,8 +21,7 @@ class Point3D
 		double const& getZCoor() const;
 		///////////////
 		//Surcharge des operateurs <<
-		friend std::ostream& operator<< (std::ostream &os, const Point3D &p);
-		
+		friend std::ostream& operator<< (std::ostream &os, const Point3D &p);	
 		
 	private :
 		double x,y,z;
