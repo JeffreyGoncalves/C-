@@ -6,7 +6,7 @@ LDFLAGS= -g -lfl
 all : copy test clean
 
 copy :
-	cp main/main.cpp Object3D/*.cpp Object3D/*.h Point3D/*.cpp Point3D/*.h vec3D/*.cpp vec3D/*.h ray3D/*.cpp ray3D/*.h color/*.cpp color/*.h .
+	cp main/main.cpp Object3D/*.cpp Object3D/*.h Point3D/*.cpp Point3D/*.h vec3D/*.cpp vec3D/*.h ray3D/*.cpp ray3D/*.h sphere/*.cpp sphere/*.h color/*.cpp color/*.h .
 
 test : $(OBJ)
 	$(CXX) -o $@ $(OBJ) $(LDFLAGS)
