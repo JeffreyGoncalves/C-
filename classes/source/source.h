@@ -10,7 +10,7 @@ class Source
 {
 	Point3D *position;
 	Color *lightColor;
-	double rayon = 0.5;
+	static const double rayon = 0.5;
 
 public:
 	Source();

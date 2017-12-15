@@ -21,7 +21,7 @@ class Point3D
 		double const& getZCoor() const;
 		///////////////
 		//Surcharge des operateurs <<
-		friend std::ostream& operator<< (std::ostream &os, const Point3D &p);	
+		friend std::ostream& operator<< (std::ostream &os, const Point3D &p);
 		
 	private :
 		double x,y,z;

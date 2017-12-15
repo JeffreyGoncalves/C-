@@ -2,10 +2,12 @@
 #define SCENE_H
 
 #include <vector>
-#include <cstdarg>
+#include <algorithm>
 #include "Object3D.h"
 #include "sphere.h"
 #include "color.h"
+#include "source.h"
+#include "Camera.h"
 
 class Scene
 {
@@ -15,21 +17,22 @@ class Scene
 		~Scene();
 		
 		void addObject(Object3D *o);
-		//bool removeObject(Object3D *o);
-		//bool removeObject(int i);
-		Object3D* getObject(int i);
+		bool removeObject(Object3D *o);
+		bool removeObject(unsigned int i);
+		Object3D* const getObject(int i);
 		
-		//void setBackgroundColor(Color newBackColor);
-		//void setCamera(camera newCamera);
-		//void addLight(light newLight);
+		void setBackgroundColor(Color newBackColor);
+		void setCamera(Camera newCamera);
+		void addLightSource(Source *newLight);
+		Source* const getLightSource(int i);
 		//void removeLight(light lightToRemove);
 		//void removeLight(int i);
 		
 	private :
 		std::vector<Object3D*> sceneObjects;
-		//std::vector<light> lights;
+		std::vector<Source*> sceneLights;
 		Color backgroundColor;
-		//camera c;
+		Camera sceneCamera;
 };
 
 #endif

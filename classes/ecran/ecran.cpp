@@ -1,32 +1,34 @@
 #include "ecran.h"
 
 ////////CONSTRUCTEUR////////
-Ecran::Ecran(Point3D topL,Point3D topR, Point3D botL,int r){
+Ecran::Ecran(Point3D topL,Point3D topR, Point3D botL, int horizontalRes){
 
 	leftTop=topL;
 	leftBottom=botL;
 	rightTop=topR;
-    FindRightBottom(topL,topR,botL);
-	resolution = r;
+	rightBottom = FindRightBottom(topL,topR,botL);
+	HResolution = horizontalRes;
+	VResolution = calcVerticalResolution();
 }
 
-double Ecran::getPixelHeight(){
+double Ecran::calcVerticalResolution(){
 
-	double height=0;
-	double longueur = rightTop.getXCoor() - leftTop.getXCoor();
-	double rapport = resolution / longueur;
-	height = longueur * rapport;
-
-	return height;
+	vec3D l(leftTop, rightTop),
+		  h(leftTop, leftBottom);
+	double length = l.getNorm(),
+		   height = h.getNorm(),
+		   ratio = HResolution/length;
+		   
+	return height*ratio;
 }
 
-void Ecran::FindRightBottom(Point3D topL,Point3D topR, Point3D botL){
+Point3D Ecran::FindRightBottom(Point3D topL,Point3D topR, Point3D botL){
 
-	rightBottom = new Point3D(); 
 	double xCoor = topR.getXCoor() - topL.getXCoor() + botL.getXCoor();
 	double yCoor = topR.getYCoor() - topL.getYCoor() + botL.getYCoor();
 	double zCoor = topR.getZCoor() - topL.getZCoor() + botL.getZCoor();
-	rightBottom->setPoint(xCoor,yCoor,zCoor);
+	
+	return Point3D(xCoor, yCoor, zCoor);
 }
 
 //////GETTERS//////
@@ -45,7 +47,12 @@ Point3D const& Ecran::getRightTop(){
 	return this->rightTop;
 }
 
-int const& Ecran::getResolution(){
+int const& Ecran::getHorizontalResolution(){
 
-	return this->resolution;
+	return this->HResolution;
+}
+
+int const& Ecran::getVerticalResolution(){
+
+	return this->VResolution;
 }

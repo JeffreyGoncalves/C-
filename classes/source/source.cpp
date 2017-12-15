@@ -17,3 +17,11 @@ Source::Source(double x,double y,double z,int r, int g,int b){
 	position = new Point3D(x,y,z);
 	lightColor = new Color(r,g,b);
 }
+
+Source::Source(const Source &s)
+{
+	this->position = s.position;
+	this->lightColor = s.lightColor;
+}
+
+Source::~Source(){}
