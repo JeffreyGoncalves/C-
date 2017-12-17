@@ -61,11 +61,10 @@ int main(int arc, char** argv)
 	Scene s(Color(80, 80, 100), Camera(100, 100, 0), 
 			Ecran(Point3D(90,110,30), Point3D(110, 110, 30), Point3D(90, 90, 30), 1200));
 		
-	s.addLightSource(new Source(Point3D(200, 300, 0), Color(245, 200, 200)));
+	s.addLightSource(new Source(Point3D(500, 100, 100), Color(245, 200, 200)));
 	s.addObject(new Sphere(90, 90, 60, 2, Color(250, 0, 0), 0.3));
 	s.addObject(new Sphere(100, 110, 60, 2, Color(0, 250, 0), 0.3));
 	s.addObject(new Sphere(110, 110, 60, 2, Color(0, 250, 0), 0.3));
-	s.addObject(new Sphere(100, 100, 60, 2, Color(155, 10, 155), 0.8));
 	
 	Color **tab = s.calcScenePicture();
 	Ecran e = s.getEcran();

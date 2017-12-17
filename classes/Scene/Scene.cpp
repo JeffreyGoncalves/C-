@@ -123,7 +123,24 @@ Color Scene::calcScenePixel(ray3D ray, int nb_rec)
 	
 	//On decide maintenant si on effectue un appel recursif ou un renvoi de couleur apres contact avec un object3D
 	if(nb_rec == 0 && objectCollisionPoint == NULL)
-		return this->getBackgroundColor();
+	{
+		//Renvoie la couleur de fond, en fonction de la presence d'une source lumineuse proche
+		//De base : return this->getBackgroundColor()
+		Color c = this->getBackgroundColor(),
+			  sourceColor = this->sceneLights.at(0)->getSourceColor();
+				  
+		vec3D cameraToLightVec(this->sceneCamera.getCameraPosition(), this->sceneLights.at(0)->getSourceLocation()),
+			  cameraToPixelVec(ray.getRayDirection());
+		cameraToLightVec = cameraToLightVec.normalize();
+		cameraToPixelVec = cameraToPixelVec.normalize();
+		
+		double cosT = cameraToLightVec.dot(cameraToPixelVec),
+			   newR = double(sourceColor.getRed()) * double(c.getRed()) / 255.d,
+			   newG = double(sourceColor.getGreen()) * double(c.getGreen()) / 255.d,
+			   newB = double(sourceColor.getBlue()) * double(c.getBlue()) / 255.d;
+		
+		return Color(int(newR), int(newG), int(newB)).times(sqrt(pow(cosT,2)));
+	}
 	
 	else if(objectCollided != NULL)
 	{
