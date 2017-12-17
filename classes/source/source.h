@@ -11,7 +11,6 @@ class Source
 {
 	Point3D position;
 	Color lightColor;
-	static const double radius = 0.5;
 
 public:
 	Source();
@@ -22,9 +21,7 @@ public:
 	
 	//Getters
 	Color const& getSourceColor();
-	
-	Point3D* detectCollision(ray3D ray);
-	
+	Point3D const& getSourceLocation();
 };
 
 #endif 

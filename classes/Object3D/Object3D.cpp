@@ -11,6 +11,11 @@ Color const& Object3D::getObjectColor()
 	return this->rgb;
 }
 
+float const& Object3D::getObjectReflexionFactor()
+{
+	return this->reflexion;
+}
+
 ray3D Object3D::calcReflexionRay(Point3D reflectedRayOrigin, ray3D r)
 {
 	vec3D v_incident(r.getRayDirection()),

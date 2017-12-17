@@ -16,6 +16,16 @@ public:
 	int const& getRed();
 	int const& getGreen();
 	int const& getBlue();
+	
+	Color times(double t);
+	
+	//Operateurs +=, -=, + , -, *= et *
+	Color operator+= (Color const& c);
+	Color operator-= (Color const& c);
+	Color operator+ (Color const& c);
+	Color operator- (Color const& c);
+	Color operator*= (Color const& c);
+	Color operator* (Color const& c);
 };
 
 #endif

@@ -45,7 +45,9 @@ class Scene
 		Ecran ecran;
 		
 		//Methode de calcul d'un pixel, utilise uniquement par calcScenePicture
-		Color calcScenePixel(ray3D ray, Object3D *previousObjectCollided, int nb_rec);	//nb_rec : nombre de recursions autorises
+		Color calcScenePixel(ray3D ray, int nb_rec);	//nb_rec : nombre de recursions autorises
+		
+		const static int nb_max_recursions = 20;
 };
 
 #endif
