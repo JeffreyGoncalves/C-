@@ -15,13 +15,19 @@ class Ecran
 		Point3D const& getLeftTop();
 		Point3D const& getRightTop();
 		Point3D const& getRightBottom();
-		int const& getHorizontalResolution();
-		int const& getVerticalResolution();
+		
+		//
+		unsigned int const& getHorizontalResolution();
+		unsigned int const& getVerticalResolution();
+		double calcHeight();
+		double calcLength();
+		Point3D calcPixelLocation(unsigned int pixelVPos, unsigned int pixelHPos);
+		
 
 	private:
 		Point3D leftBottom,leftTop;
 		Point3D rightBottom,rightTop;
-		int HResolution, VResolution;
+		unsigned int HResolution, VResolution;
 		//Methode privee pour calculer le quatrieme point de l'ecran
 		Point3D FindRightBottom(Point3D topL,Point3D topR,Point3D botL);
 		//Methode privee qui retourne la hauteur de l'ecran en pixels

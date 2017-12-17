@@ -13,9 +13,9 @@ public:
 	Color();
 	Color(int r, int g, int b);
 	void setColor(int r, int g, int b);
-	int getRed();
-	int getGreen();
-	int getBlue();
+	int const& getRed();
+	int const& getGreen();
+	int const& getBlue();
 };
 
 #endif

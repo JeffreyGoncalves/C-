@@ -6,6 +6,11 @@ Object3D::Object3D(Color C, float ref) : rgb(C), reflexion(ref) {}
 
 Object3D::~Object3D() {}
 
+Color const& Object3D::getObjectColor()
+{
+	return this->rgb;
+}
+
 ray3D Object3D::calcReflexionRay(Point3D reflectedRayOrigin, ray3D r)
 {
 	vec3D v_incident(r.getRayDirection()),

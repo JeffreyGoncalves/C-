@@ -1,6 +1,8 @@
 #ifndef RAY3D_H
 #define RAY3D_H
 
+#include <iostream>
+
 #include "Point3D.h"
 #include "vec3D.h"
 
@@ -13,6 +15,8 @@ class ray3D
 		//getters
 		Point3D const& getOrigin() const;
 		vec3D const& getRayDirection() const;
+		// << redefinition
+		friend std::ostream& operator<< (std::ostream &os, const ray3D &ray);
 	
 	private :
 		Point3D origin;

@@ -36,6 +36,6 @@ void Color::setColor(int r, int g, int b){
 	}
 }
 
-int Color::getRed(){ return red; }
-int Color::getGreen(){ return green; }
-int Color::getBlue(){ return blue; }
+int const& Color::getRed(){ return red; }
+int const& Color::getGreen(){ return green; }
+int const& Color::getBlue(){ return blue; }

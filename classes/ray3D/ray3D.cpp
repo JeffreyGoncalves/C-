@@ -24,3 +24,8 @@ vec3D const& ray3D::getRayDirection() const
 	return this->rayDirection;
 }
 //////////////////////
+
+std::ostream& operator<< (std::ostream &os, const ray3D &ray)
+{
+	return os << "Point d'origine : " << ray.getOrigin() << ", vecteur : " << ray.getRayDirection();
+}

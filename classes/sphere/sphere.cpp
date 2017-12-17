@@ -25,8 +25,8 @@ Point3D* Sphere::detectCollision(ray3D ray)
 		   //Direction du rayon
 		   
 		   x_rayO = ray.getOrigin().getXCoor(),
-		   y_rayO = ray.getOrigin().getXCoor(),
-		   z_rayO = ray.getOrigin().getXCoor(),
+		   y_rayO = ray.getOrigin().getYCoor(),
+		   z_rayO = ray.getOrigin().getZCoor(),
 		   //Point d'origine du rayon
 		   
 		   x_center = center.getXCoor(),
@@ -37,7 +37,7 @@ Point3D* Sphere::detectCollision(ray3D ray)
 	//Definition de a,b et c  
 	double a = pow(x_dir, 2) + pow(y_dir, 2) + pow(z_dir, 2),
 		   b = 2*(x_dir*(x_rayO - x_center) + y_dir*(y_rayO - y_center) + z_dir*(z_rayO - z_center)),
-		   c = pow(x_rayO-x_center, 2) + pow(y_rayO-y_center, 2) + pow(z_rayO-z_center, 2) - radius;
+		   c = pow(x_rayO-x_center, 2) + pow(y_rayO-y_center, 2) + pow(z_rayO-z_center, 2) - pow(radius, 2);
 		   
 	//Calcul du determinant
 	double delta = b*b - 4*a*c;

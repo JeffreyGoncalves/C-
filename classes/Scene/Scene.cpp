@@ -1,11 +1,10 @@
 #include "Scene.h"
 
-Scene::Scene() : sceneObjects(), backgroundColor(0, 0, 0) {}
+Scene::Scene(Camera cam, Ecran e) : sceneObjects(), sceneLights(), backgroundColor(0, 0, 0), 
+									sceneCamera(cam), ecran(e) {}
 
-Scene::Scene(Color c) : sceneObjects()
-{
-	this->backgroundColor = c;
-}
+Scene::Scene(Color c, Camera cam, Ecran e) : sceneObjects(), sceneLights(), backgroundColor(c), 
+											 sceneCamera(cam), ecran(e) {}
 
 Scene::~Scene()
 {
@@ -19,6 +18,20 @@ Scene::~Scene()
 		delete sceneLights[i];
 	}
 }
+
+Color const& Scene::getBackgroundColor()
+{
+	return this->backgroundColor;
+}
+
+Ecran const& Scene::getEcran()
+{
+	return this->ecran;
+}
+
+//////////////////////////////////////////////////////////
+//			Methodes relatives aux Object3D				//
+//////////////////////////////////////////////////////////
 
 void Scene::addObject(Object3D *o)
 {
@@ -49,6 +62,9 @@ Object3D* const Scene::getObject(int i)
 	return sceneObjects[i];
 }
 
+//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
 void Scene::setBackgroundColor(Color newBackColor)
 {
 	this->backgroundColor = newBackColor;
@@ -67,6 +83,150 @@ void Scene::addLightSource(Source *newLight)
 Source* const Scene::getLightSource(int i)
 {
 	return sceneLights[i];
+}
+
+//////////////////////////////////////////////////////////
+//			Methodes de calcul de l'image				//
+//////////////////////////////////////////////////////////
+Color Scene::calcScenePixel(ray3D ray, Object3D *previousObjectCollided, int nb_rec)
+{
+	//Initialisation : preparation des pointeurs utilises ici
+	Object3D *objectSelected = NULL, *objectCollided = NULL;
+	Source *lightSourceSelected = NULL, *lightSourceCollided = NULL;
+	Point3D *p = NULL, *objectCollisionPoint = NULL, *lightSourceCollisionPoint = NULL;
+	vec3D *previous = NULL, *next = NULL;
+		 
+	
+	//On regarde si le rayon en parametre rentre en collision avec une source de lumiere
+	//////////////////////////////////////////////////////////
+	for(unsigned int i=0; i<sceneLights.size(); i++)
+	{
+		lightSourceSelected = sceneLights.at(i);
+		p = lightSourceSelected->detectCollision(ray);
+		if(p != NULL)
+		{
+			if(lightSourceCollisionPoint != NULL)
+			{
+				next = new vec3D(ray.getOrigin(), *p);
+				previous = new vec3D(ray.getOrigin(), *lightSourceCollisionPoint);
+			}
+			
+			if(lightSourceCollisionPoint == NULL || (next->getNorm() < previous->getNorm()))
+			{
+				 lightSourceCollisionPoint = p;
+				 lightSourceCollided = lightSourceSelected;
+			}
+			
+			if(previous != NULL && next != NULL)
+			{
+				delete next;
+				delete previous;
+			}
+		}
+	}
+	
+	//On regarde si le rayon en parametre rentre en collision avec un object3D, si nb_rec != 0
+	//////////////////////////////////////////////////////////
+	if(nb_rec > 0)
+	{
+		for(unsigned int i=0; i<sceneObjects.size(); i++)
+		{
+			objectSelected = sceneObjects.at(i);
+			p = objectSelected->detectCollision(ray);
+			
+			if(p != NULL)
+			{
+				if(objectCollisionPoint != NULL)
+				{
+					next = new vec3D(ray.getOrigin(), *p);
+					previous = new vec3D(ray.getOrigin(), *objectCollisionPoint);
+				}
+				
+				if(objectCollisionPoint == NULL || (next->getNorm() < previous->getNorm()))
+				{
+					objectCollisionPoint = p;
+					objectCollided = objectSelected;
+				}
+				
+				if(previous != NULL && next != NULL)
+				{
+					delete next;
+					delete previous;
+				}
+			}
+		}
+	}
+	
+	//On decide maintenant si on effectue un appel recursif ou un renvoi de couleur apres contact avec une source lumineuse
+	//Cas ou la source lumineuse est touchee en premier
+	if((lightSourceCollided != NULL && objectCollided == NULL) ||
+	   (lightSourceCollided != NULL && objectCollided != NULL && vec3D(ray.getOrigin(), *lightSourceCollisionPoint).getNorm() < vec3D(ray.getOrigin(), *objectCollisionPoint).getNorm()))
+	{
+		if(previousObjectCollided == NULL)
+			return lightSourceCollided->getSourceColor();
+		else
+		{
+			//Couleur renvoyee
+			Color sourceColor = lightSourceCollided->getSourceColor();
+			Color previousObjectColor = previousObjectCollided->getObjectColor();
+			
+			vec3D rayNorm = ray.getRayDirection();
+			rayNorm = rayNorm.normalize();
+			
+			double cosAlpha = sqrt(pow(previousObjectCollided->calcNormToPoint(ray.getOrigin()).dot(rayNorm), 2));
+			
+			double colorR = double(sourceColor.getRed()) * double(previousObjectColor.getRed()) * cosAlpha / 255.d,
+				   colorG = double(sourceColor.getGreen()) * double(previousObjectColor.getGreen()) * cosAlpha / 255.d,
+				   colorB = double(sourceColor.getBlue()) * double(previousObjectColor.getBlue()) * cosAlpha / 255.d;
+				   
+			return Color(colorR, colorG, colorB);
+		}
+	}
+	
+	//Cas ou aucune source lumineuse n'est touchee en premier
+	else
+	{
+		//Un object3D est touche par le rayon et le nombre de recursions autorisees est superieur strictement a 0
+		if(objectCollided != NULL && nb_rec > 0)
+		{
+			ray3D newRay = objectCollided->calcReflexionRay(*objectCollisionPoint, ray);
+			return calcScenePixel(newRay, objectCollided, nb_rec-1);
+		}
+		else if(previousObjectCollided == NULL)
+			return this->getBackgroundColor();
+		else return Color(0,0,0);
+	}
+}
+
+Color** Scene::calcScenePicture()
+{
+	//Initialisation
+	unsigned int hRes = this->ecran.getHorizontalResolution(),
+				 vRes = this->ecran.getVerticalResolution();
+	
+	//Creation du tableau representant l'image
+	Color **picture = new Color*[vRes];
+	*picture = new Color[vRes * hRes];
+	
+	for(unsigned int i=1; i<vRes; i++)
+		picture[i] = picture[i-1] + hRes;
+		
+	//Point3D stockant la position du pixel a calculer dans la scene
+	Point3D pixelPoint,
+			cameraPos = this->sceneCamera.getCameraPosition();
+	//////////////////////////////////////////
+	
+	for(unsigned int i=0; i<vRes; i++)
+	{
+		for(unsigned int j=0; j<hRes; j++)
+		{
+			pixelPoint = this->ecran.calcPixelLocation(i, j);
+			ray3D startRay(cameraPos, vec3D(cameraPos, pixelPoint));
+			picture[i][j] = calcScenePixel(startRay, NULL, 3);
+		}
+	}
+	
+	return picture;
 }
 
 /*int main()
