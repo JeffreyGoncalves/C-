@@ -9,6 +9,13 @@ Point3D::Point3D(double x_coor, double y_coor, double z_coor)
 	z = z_coor;
 }
 
+Point3D::Point3D(const Point3D &p)
+{
+	x = p.x;
+	y = p.y;
+	z = p.z;
+}
+
 //////////Setter//////////
 void Point3D::setPoint(double x_coor, double y_coor, double z_coor){
 

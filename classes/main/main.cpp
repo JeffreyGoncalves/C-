@@ -71,8 +71,8 @@ int main(int arc, char** argv)
 	
 	printToFile("testPicture", tab, e.getHorizontalResolution(), e.getVerticalResolution());
 	
-	delete *tab;
-	delete tab;
+	delete[] *tab;
+	delete[] tab;
 	
 	return 0;
 }

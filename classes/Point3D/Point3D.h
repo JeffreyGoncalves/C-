@@ -10,6 +10,7 @@ class Point3D
 		///////////////
 		Point3D();
 		Point3D(double x_coor, double y_coor, double z_coor);
+		Point3D(const Point3D &p);
 
 		//Setter
 		////////////////

@@ -94,7 +94,7 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObjectCollided, int nb_
 	Object3D *objectSelected = NULL, *objectCollided = NULL;
 	Source *lightSourceSelected = NULL, *lightSourceCollided = NULL;
 	Point3D *p = NULL, *objectCollisionPoint = NULL, *lightSourceCollisionPoint = NULL;
-	vec3D *previous = NULL, *next = NULL;
+	vec3D previous, next;
 		 
 	
 	//On regarde si le rayon en parametre rentre en collision avec une source de lumiere
@@ -107,22 +107,18 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObjectCollided, int nb_
 		{
 			if(lightSourceCollisionPoint != NULL)
 			{
-				next = new vec3D(ray.getOrigin(), *p);
-				previous = new vec3D(ray.getOrigin(), *lightSourceCollisionPoint);
+				next = vec3D(ray.getOrigin(), *p);
+				previous = vec3D(ray.getOrigin(), *lightSourceCollisionPoint);
 			}
 			
-			if(lightSourceCollisionPoint == NULL || (next->getNorm() < previous->getNorm()))
+			if(lightSourceCollisionPoint == NULL || (next.getNorm() < previous.getNorm()))
 			{
-				 lightSourceCollisionPoint = p;
+				 delete lightSourceCollisionPoint; 
+				 lightSourceCollisionPoint = new Point3D(*p);
 				 lightSourceCollided = lightSourceSelected;
 			}
-			
-			if(previous != NULL && next != NULL)
-			{
-				delete next;
-				delete previous;
-			}
 		}
+		delete p;
 	}
 	
 	//On regarde si le rayon en parametre rentre en collision avec un object3D, si nb_rec != 0
@@ -138,22 +134,18 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObjectCollided, int nb_
 			{
 				if(objectCollisionPoint != NULL)
 				{
-					next = new vec3D(ray.getOrigin(), *p);
-					previous = new vec3D(ray.getOrigin(), *objectCollisionPoint);
+					next = vec3D(ray.getOrigin(), *p);
+					previous = vec3D(ray.getOrigin(), *objectCollisionPoint);
 				}
 				
-				if(objectCollisionPoint == NULL || (next->getNorm() < previous->getNorm()))
+				if(objectCollisionPoint == NULL || (next.getNorm() < previous.getNorm()))
 				{
-					objectCollisionPoint = p;
+					delete objectCollisionPoint;
+					objectCollisionPoint = new Point3D(*p);
 					objectCollided = objectSelected;
 				}
-				
-				if(previous != NULL && next != NULL)
-				{
-					delete next;
-					delete previous;
-				}
 			}
+			delete p;
 		}
 	}
 	
@@ -162,6 +154,9 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObjectCollided, int nb_
 	if((lightSourceCollided != NULL && objectCollided == NULL) ||
 	   (lightSourceCollided != NULL && objectCollided != NULL && vec3D(ray.getOrigin(), *lightSourceCollisionPoint).getNorm() < vec3D(ray.getOrigin(), *objectCollisionPoint).getNorm()))
 	{
+		delete lightSourceCollisionPoint;
+		delete objectCollisionPoint;
+		
 		if(previousObjectCollided == NULL)
 			return lightSourceCollided->getSourceColor();
 		else
@@ -189,7 +184,11 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObjectCollided, int nb_
 		//Un object3D est touche par le rayon et le nombre de recursions autorisees est superieur strictement a 0
 		if(objectCollided != NULL && nb_rec > 0)
 		{
-			ray3D newRay = objectCollided->calcReflexionRay(*objectCollisionPoint, ray);
+			Point3D objCollisionPoint(*objectCollisionPoint);
+			delete objectCollisionPoint;
+			delete lightSourceCollisionPoint;
+			
+			ray3D newRay = objectCollided->calcReflexionRay(objCollisionPoint, ray);
 			return calcScenePixel(newRay, objectCollided, nb_rec-1);
 		}
 		else if(previousObjectCollided == NULL)
@@ -222,7 +221,7 @@ Color** Scene::calcScenePicture()
 		{
 			pixelPoint = this->ecran.calcPixelLocation(i, j);
 			ray3D startRay(cameraPos, vec3D(cameraPos, pixelPoint));
-			picture[i][j] = calcScenePixel(startRay, NULL, 3);
+			picture[i][j] = calcScenePixel(startRay, NULL, 1);
 		}
 	}
 	
