@@ -2,15 +2,22 @@
 
 Color::Color(int r, int g, int b){
 
-	if((r>=0 && r<256) && (g>=0 && g<256) && (b>=0 && b<256)){
-
-		red = r;
-		green = g;
-		blue = b;
-	}
-	else{
-
+	red = r;
+	green = g;
+	blue = b;
+	if(!((r>=0 && r<256) && (g>=0 && g<256) && (b>=0 && b<256))){
+		
 		std::cout << "Valeurs incorrectes !!\nr = " << r << "g = " << g << "b =" << b <<"\n";
+		//On redefinit alors la couleur correctement
+		//Rouge
+		if(r>255)red = 255;
+		else if(r<0)red = 0;
+		//Vert
+		if(g>255)green = 255;
+		else if(g<0)green = 0;
+		//Bleu
+		if(b>255)blue = 255;
+		else if(b<0)blue = 0;
 	}
 }
 
