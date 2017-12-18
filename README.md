@@ -1,4 +1,3 @@
 #TODO :
-#faire en sorte que le polymorphisme soit utilisable (Notamment au niveau du destructeur)
-#integrer la camera et les sources de lumiere
-#creer une classe controleur
+-> Resoudre le probleme du bug de couleur dans le cas où la lumière ou un object3D se trouve à la position de la camera
+-> Intégrer le parseur au programme
