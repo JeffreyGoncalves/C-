@@ -71,7 +71,9 @@ vec3D vec3D::times(const double &d)
 
 vec3D vec3D::normalize()
 {
-	return this->times(1.d/this->getNorm());
+	double vecNorm = this->getNorm();
+	if(vecNorm != 0)return this->times(1.d/this->getNorm());
+	else return *this;
 }
 ////////////////////////////
 
