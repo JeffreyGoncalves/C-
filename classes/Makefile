@@ -1,7 +1,7 @@
 OBJ=main.o Object3D.o sphere.o Point3D.o vec3D.o ray3D.o color.o Scene.o Camera.o source.o ecran.o
 CXX=g++
-CXXFLAGS=-Wall -ansi -I./ -g
-LDFLAGS= -g -lfl
+CXXFLAGS=-Wall -ansi -I./ -g -fopenmp
+LDFLAGS= -g -lfl -fopenmp
 
 all : copy test clean
 

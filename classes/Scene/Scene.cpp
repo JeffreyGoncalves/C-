@@ -226,8 +226,10 @@ Color** Scene::calcScenePicture()
 			cameraPos = this->sceneCamera.getCameraPosition();
 	//////////////////////////////////////////
 	
+	#pragma omp parallel for
 	for(unsigned int i=0; i<vRes; i++)
 	{
+		#pragma omp parallel for
 		for(unsigned int j=0; j<hRes; j++)
 		{
 			pixelPoint = this->ecran.calcPixelLocation(i, j);
