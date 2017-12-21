@@ -21,7 +21,8 @@ ray3D Object3D::calcReflexionRay(Point3D reflectedRayOrigin, ray3D r)
 	vec3D v_incident(r.getRayDirection()),
 		  normale(this->calcNormToPoint(reflectedRayOrigin));
 		  
-	vec3D reflectedVec3D = v_incident - normale.times(2*(v_incident.dot(normale)));
+	vec3D reflectedVec3D = v_incident - normale.times(2*(normale.dot(v_incident)));
+	//Pourquoi ca marche ??? Ca devrait etre un echec
 	
 	return ray3D(reflectedRayOrigin, reflectedVec3D);
 }

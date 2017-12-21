@@ -14,10 +14,10 @@
 
 using namespace std;
 
-void printToFile(const string fileToWrite, Color **tab, int length, int height)
+void printToFile(string fileToWrite, Color **tab, int length, int height)
 {
 	ofstream file;
-	file.open("testPicture", ios::out);
+	file.open(fileToWrite.c_str(), ios::out);
 	file << "P3" << endl;
 	file << length << " " << height << endl;
 	file << "255" << endl;
@@ -37,42 +37,30 @@ void printToFile(const string fileToWrite, Color **tab, int length, int height)
 	file.close();
 }
 
-int main(int arc, char** argv)
+int main(int argc, char** argv)
 {
-	/*vec3D v(1.d,2.d,0.d);
-	vec3D w(2, 3, 7), x(7, 5, 1), y(0, 1, 3);
-	Point3D p(0,0,10);
-	Object3D *o = new Sphere(0, 0, 0, 5, Color(255, 0, 0), 1);
-	Sphere *t = dynamic_cast<Sphere*>(o), s = *t; 
-	cout << "Le vecteur v a pour valeurs " << v << endl;
-	cout << "La norme de v est egale a " << v.getNorm() << endl;
-	cout << "v normalise a pours valeurs " << v.normalize() << endl;
-	cout << "La norme de v est egale a " << v.normalize().getNorm() << endl;
-	cout << "Le point p a pour valeurs " << p << endl;
-	cout << "La sphere s a pour caracteristiques " << s << endl;
-	cout << "Le vecteur normal a la sphere s au point " << p << " a pour valeurs " << s.calcNormToPoint(p) << endl;
-	
-	w += x;
-	cout << "W a pour valeurs " << w << endl;
-	cout << "La somme de x et y donne les valeurs " << x+y << endl;
-	
-	delete o;*/
-	
-	Scene s(Color(80, 80, 100), Camera(100, 100, 0), 
-			Ecran(Point3D(90,110,30), Point3D(110, 110, 30), Point3D(90, 90, 30), 1200));
+	Scene s(Color(100, 100, 100), Camera(100, 100, 0), 
+			Ecran(Point3D(90,110,30), Point3D(110, 110, 30), Point3D(90, 90, 30), 2000));
 		
-	s.addLightSource(new Source(Point3D(200, 100, 100), Color(245, 200, 200)));
-	s.addObject(new Sphere(90, 90, 60, 2, Color(250, 0, 0), 0.3));
-	s.addObject(new Sphere(100, 110, 60, 5, Color(0, 250, 0), 0.3));
-	s.addObject(new Sphere(110, 110, 60, 2, Color(0, 250, 0), 0.3));
+	s.addLightSource(new Source(Point3D(200, 200, 0), Color(245, 200, 200)));
+	s.addObject(new Sphere(90, 90, 60, 2, Color(250, 0, 0), 1));
+	s.addObject(new Sphere(100, 110, 60, 5, Color(0, 250, 0), 1));
+	s.addObject(new Sphere(110, 110, 60, 2, Color(0, 0, 250), 0.3));
+	s.addObject(new Sphere(110, 110, 70, 2, Color(125, 0, 125), 0));
 	
-	Color **tab = s.calcScenePicture();
-	Ecran e = s.getEcran();
 	
-	printToFile("testPicture", tab, e.getHorizontalResolution(), e.getVerticalResolution());
+	if(argc >= 2)
+	{
+		Color **tab = s.calcScenePicture();
+		Ecran e = s.getEcran();
 	
-	delete[] *tab;
-	delete[] tab;
+		printToFile(argv[1], tab, e.getHorizontalResolution(), e.getVerticalResolution());
+		
+		delete[] *tab;
+		delete[] tab;
+	}
+	else cout << "Utilisation : ./test nomFichier" << endl;
+	
 	
 	return 0;
 }

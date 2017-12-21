@@ -127,3 +127,8 @@ Color Color::operator* (Color const& c)
 	return toReturn;
 }
 
+std::ostream& operator<< (std::ostream &os, Color const &c)
+{
+	return os << "R : " << c.red << ", G : " << c.green << ", B : " << c.blue;
+}
+

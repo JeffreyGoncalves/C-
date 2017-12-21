@@ -26,6 +26,7 @@ public:
 	Color operator- (Color const& c);
 	Color operator*= (Color const& c);
 	Color operator* (Color const& c);
+	friend std::ostream& operator<< (std::ostream &os, Color const& c);
 };
 
 #endif

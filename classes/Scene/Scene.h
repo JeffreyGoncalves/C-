@@ -2,6 +2,7 @@
 #define SCENE_H
 
 #include <iostream>
+#include <cmath>
 #include <vector>
 #include <algorithm>
 #include "Object3D.h"
@@ -22,7 +23,6 @@ class Scene
 		bool removeObject(Object3D *o);
 		bool removeObject(unsigned int i);
 		Object3D* const getObject(int i);
-		
 		void setBackgroundColor(Color newBackColor);
 		void setCamera(Camera newCamera);
 		void addLightSource(Source *newLight);
@@ -45,9 +45,9 @@ class Scene
 		Ecran ecran;
 		
 		//Methode de calcul d'un pixel, utilise uniquement par calcScenePicture
-		Color calcScenePixel(ray3D ray, int nb_rec);	//nb_rec : nombre de recursions autorises
+		Color calcScenePixel(ray3D ray, Object3D *previousObject, int nb_rec);	//nb_rec : nombre de recursions autorises
 		
-		const static int nb_max_recursions = 20;
+		const static int nb_max_recursions = 5;
 };
 
 #endif

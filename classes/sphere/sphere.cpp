@@ -50,7 +50,7 @@ Point3D* Sphere::detectCollision(ray3D ray)
 	else if(delta == 0)
 	{
 		r_1 = -b/(2*a);
-		if(r_1 < 0) return NULL;
+		if(r_1 <= 0) return NULL;
 		else r_toReturn = r_1;
 	}
 	
@@ -59,16 +59,16 @@ Point3D* Sphere::detectCollision(ray3D ray)
 	{
 		r_1 = (-b-sqrt(delta))/(2*a);
 		r_2 = (-b+sqrt(delta))/(2*a);
-		if(r_1 >= 0)
+		if(r_1 > 0)
 		{
-			if(r_2 >= 0)
+			if(r_2 > 0)
 			{
 				if(r_1 < r_2) r_toReturn = r_1;
 				else 		  r_toReturn = r_2;
 			}
 			else r_toReturn = r_1;
 		}
-		else if(r_2 >= 0) r_toReturn = r_2;
+		else if(r_2 > 0) r_toReturn = r_2;
 		else return NULL;
 	}		
 	
