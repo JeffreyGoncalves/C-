@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <cstring>
 //#include <SDL2/SDL.h>
 
 #include "Scene.h"
@@ -39,6 +40,10 @@ void printToFile(string fileToWrite, Color **tab, int length, int height)
 
 int main(int argc, char** argv)
 {
+	bool interpolate = false,
+		 isValid = true;
+	int argRead = 1;
+	
 	Scene s(Color(100, 100, 100), Camera(100, 100, 0), 
 			Ecran(Point3D(90,110,30), Point3D(110, 110, 30), Point3D(90, 90, 30), 2000));
 		
@@ -49,17 +54,51 @@ int main(int argc, char** argv)
 	s.addObject(new Sphere(110, 110, 70, 2, Color(125, 0, 125), 0));
 	
 	
-	if(argc >= 2)
+	//Lecture des options
+	while(argv[argRead] != NULL && !strncmp(argv[argRead], "-", 1))
 	{
-		Color **tab = s.calcScenePicture();
+		if(!strcmp(argv[argRead], "-i"))
+		{
+			if(!interpolate) {
+				interpolate = true;
+				argRead++;
+				//Cas optionnel : reglage de l'interpolation
+				if(atoi(argv[argRead]))
+				{
+					int newInterpolationFactor = atoi(argv[argRead]);
+					if(newInterpolationFactor >= 2)
+					{
+						s.setInterpolationFactor((unsigned int)(newInterpolationFactor));	
+						argRead++;
+					}
+					else {
+						isValid = false;
+						break;
+					}
+				}
+			}
+			else {
+				isValid = false;
+				break;
+			}
+		}
+	}
+		
+	if(argv[argRead] != NULL && isValid)
+	{
+		Color **tab = s.calcScenePicture(interpolate);
 		Ecran e = s.getEcran();
 	
-		printToFile(argv[1], tab, e.getHorizontalResolution(), e.getVerticalResolution());
+		printToFile(argv[argRead], tab, e.getHorizontalResolution(), e.getVerticalResolution());
 		
 		delete[] *tab;
 		delete[] tab;
 	}
-	else cout << "Utilisation : ./test nomFichier" << endl;
+	else 
+	{
+		cout << "Utilisation : ./test [options] nomFichier" << endl;
+		cout << "Options : -i [int] : interpolate to int factor >= 2 (set to 2 by default) " << endl;
+	}
 	
 	
 	return 0;

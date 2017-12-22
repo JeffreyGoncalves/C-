@@ -34,8 +34,11 @@ class Scene
 		Color const& getBackgroundColor();
 		Ecran const& getEcran();
 		
+		//Static setter for interpolation factor
+		void setInterpolationFactor(unsigned int factor){if(factor != 0) interpolationFactor = factor;}
+		
 		//Methode de calcul d'image
-		Color** calcScenePicture();
+		Color** calcScenePicture(bool interpolate);
 		
 	private :
 		std::vector<Object3D*> sceneObjects;
@@ -47,7 +50,11 @@ class Scene
 		//Methode de calcul d'un pixel, utilise uniquement par calcScenePicture
 		Color calcScenePixel(ray3D ray, Object3D *previousObject, int nb_rec);	//nb_rec : nombre de recursions autorises
 		
-		const static int nb_max_recursions = 5;
+		static const int default_nb_max_recursions = 5;
+		static const unsigned int defaultInterpolationFactor = 2;
+		
+		const int nb_max_recursions;
+		unsigned int interpolationFactor;
 };
 
 #endif
