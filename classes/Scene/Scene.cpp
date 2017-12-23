@@ -90,7 +90,7 @@ Source* const Scene::getLightSource(int i)
 //////////////////////////////////////////////////////////
 //			Methodes de calcul de l'image				//
 //////////////////////////////////////////////////////////
-Color Scene::calcScenePixel(ray3D ray, Object3D *previousObject, int nb_rec)
+Color Scene::calcScenePixel(ray3D ray, Object3D *previousObject, unsigned int nb_rec)
 {
 	//Initialisation : preparation des pointeurs utilises ici
 	Object3D *objectSelected = NULL, *objectCollided = NULL;
@@ -139,6 +139,8 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObject, int nb_rec)
 		cameraToLightVec = cameraToLightVec.normalize();
 		cameraToPixelVec = cameraToPixelVec.normalize();
 		
+		double distanceToLight = vec3D(ray.getOrigin(), this->sceneLights.at(0)->getSourceLocation()).getNorm();
+		
 		double cosT = cameraToLightVec.dot(cameraToPixelVec),
 			   newR = double(sourceColor.getRed()) * double(c.getRed()) / 255.d,
 			   newG = double(sourceColor.getGreen()) * double(c.getGreen()) / 255.d,
@@ -180,24 +182,15 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObject, int nb_rec)
 			vec3D rayNorm(*objectCollisionPoint, s->getSourceLocation());
 			rayNorm = rayNorm.normalize();
 			
-			double cosAlpha = objectCollided->calcNormToPoint(ray.getOrigin()).dot(rayNorm),
+			double cosAlpha = objectCollided->calcNormToPoint(*objectCollisionPoint).dot(rayNorm),
 				   reflexFactor = 1.d - double(objectCollided->getObjectReflexionFactor());
 				   
 			double colorR, colorB, colorG;
 			
 			cosAlpha = abs(cosAlpha);
-			if(nb_rec == 0)
-			{
-				colorR = double(sourceColor.getRed()) * double(objectColor.getRed()) * cosAlpha / 255.d,
-				colorG = double(sourceColor.getGreen()) * double(objectColor.getGreen()) * cosAlpha / 255.d,
-				colorB = double(sourceColor.getBlue()) * double(objectColor.getBlue()) * cosAlpha / 255.d;
-			}
-			else
-			{
-				colorR = reflexFactor * double(sourceColor.getRed()) * double(objectColor.getRed()) * cosAlpha / 255.d,
-				colorG = reflexFactor * double(sourceColor.getGreen()) * double(objectColor.getGreen()) * cosAlpha / 255.d,
-				colorB = reflexFactor * double(sourceColor.getBlue()) * double(objectColor.getBlue()) * cosAlpha / 255.d;
-			}
+			colorR = reflexFactor * double(sourceColor.getRed()) * double(objectColor.getRed()) * cosAlpha / 255.d, 
+			colorG = reflexFactor * double(sourceColor.getGreen()) * double(objectColor.getGreen()) * cosAlpha / 255.d,
+			colorB = reflexFactor * double(sourceColor.getBlue()) * double(objectColor.getBlue()) * cosAlpha / 255.d;
 			
 			delete objectCollisionPoint;   
 			return Color(colorR, colorG, colorB) + calcScenePixel(rayReflected, objectCollided, nb_rec+1).times(double(objectCollided->getObjectReflexionFactor()));

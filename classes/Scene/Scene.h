@@ -36,6 +36,7 @@ class Scene
 		
 		//Static setter for interpolation factor
 		void setInterpolationFactor(unsigned int factor){if(factor != 0) interpolationFactor = factor;}
+		void setNbMaxRecursions(unsigned int factor){nb_max_recursions = factor;}
 		
 		//Methode de calcul d'image
 		Color** calcScenePicture(bool interpolate);
@@ -48,12 +49,12 @@ class Scene
 		Ecran ecran;
 		
 		//Methode de calcul d'un pixel, utilise uniquement par calcScenePicture
-		Color calcScenePixel(ray3D ray, Object3D *previousObject, int nb_rec);	//nb_rec : nombre de recursions autorises
+		Color calcScenePixel(ray3D ray, Object3D *previousObject, unsigned int nb_rec);	//nb_rec : nombre de recursions autorises
 		
-		static const int default_nb_max_recursions = 5;
+		static const int default_nb_max_recursions = 3;
 		static const unsigned int defaultInterpolationFactor = 2;
 		
-		const int nb_max_recursions;
+		unsigned int nb_max_recursions;
 		unsigned int interpolationFactor;
 };
 
