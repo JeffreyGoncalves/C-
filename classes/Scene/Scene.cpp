@@ -139,8 +139,6 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObject, unsigned int nb
 		cameraToLightVec = cameraToLightVec.normalize();
 		cameraToPixelVec = cameraToPixelVec.normalize();
 		
-		double distanceToLight = vec3D(ray.getOrigin(), this->sceneLights.at(0)->getSourceLocation()).getNorm();
-		
 		double cosT = cameraToLightVec.dot(cameraToPixelVec),
 			   newR = double(sourceColor.getRed()) * double(c.getRed()) / 255.d,
 			   newG = double(sourceColor.getGreen()) * double(c.getGreen()) / 255.d,
