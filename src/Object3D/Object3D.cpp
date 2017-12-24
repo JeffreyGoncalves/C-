@@ -1,8 +1,8 @@
 #include "Object3D.h"
 
-Object3D::Object3D() : rgb(), reflexion(0.f) {}
+Object3D::Object3D() : rgb(), reflexion(0.f), alpha(0.f) {}
 
-Object3D::Object3D(Color C, float ref) : rgb(C), reflexion(ref) {}
+Object3D::Object3D(Color C, float ref, float a) : rgb(C), reflexion(ref), alpha(a){}
 
 Object3D::~Object3D() {}
 
@@ -14,6 +14,11 @@ Color const& Object3D::getObjectColor()
 float const& Object3D::getObjectReflexionFactor()
 {
 	return this->reflexion;
+}
+
+float const& Object3D::getObjectAlpha()
+{
+	return this->alpha;
 }
 
 ray3D Object3D::calcReflexionRay(Point3D reflectedRayOrigin, ray3D r)

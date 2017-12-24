@@ -5,7 +5,7 @@
 #include "Point3D.h"
 #include "color.h"
 #include "ray3D.h"
-
+#include "vec3D.h"
 
 class Source
 {

@@ -181,7 +181,7 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObject, unsigned int nb
 			rayNorm = rayNorm.normalize();
 			
 			double cosAlpha = objectCollided->calcNormToPoint(*objectCollisionPoint).dot(rayNorm),
-				   reflexFactor = 1.d - double(objectCollided->getObjectReflexionFactor());
+				   reflexFactor = abs(1.d - double(objectCollided->getObjectReflexionFactor()) - double(objectCollided->getObjectAlpha()));
 				   
 			double colorR, colorB, colorG;
 			
@@ -191,25 +191,57 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObject, unsigned int nb
 			colorB = reflexFactor * double(sourceColor.getBlue()) * double(objectColor.getBlue()) * cosAlpha / 255.d;
 			
 			delete objectCollisionPoint;   
-			return Color(colorR, colorG, colorB) + calcScenePixel(rayReflected, objectCollided, nb_rec+1).times(double(objectCollided->getObjectReflexionFactor()));
+			return Color(colorR, colorG, colorB) + calcScenePixel(rayReflected, objectCollided, nb_rec+1).times(double(objectCollided->getObjectReflexionFactor()))
+												 + calcScenePixel(ray, objectCollided, nb_rec+1).times(double(objectCollided->getObjectAlpha()));
 		}
 		else if(nb_rec <= nb_max_recursions)
 		{
 			delete objectCollisionPoint;
-			return calcScenePixel(rayReflected, objectCollided, nb_rec+1).times(double(objectCollided->getObjectReflexionFactor()));
+			return calcScenePixel(rayReflected, objectCollided, nb_rec+1).times(double(objectCollided->getObjectReflexionFactor())) +
+				   calcScenePixel(ray, objectCollided, nb_rec+1).times(double(objectCollided->getObjectAlpha()));
 		}
 		else
 		{
 			delete objectCollisionPoint;
-			return Color(0,0,0);
+			return Color(25,25,25);
 		}
 	}
 	
 	else //Cas ou objectCollided == NULL et nb_rec != 0
 	{
 		delete objectCollisionPoint;
-		return Color(0,0,0);//Si nb_rec != 0 && objectCollided == NULL
+		return Color(25,25,25);//Si nb_rec != 0 && objectCollided == NULL
 	}
+}
+
+Color Scene::interpolationLoop(unsigned int i, unsigned int j, Ecran screenToInterpolate)
+{
+	Point3D pixelPoint[interpolationFactor][interpolationFactor];
+	Point3D cameraPos = this->sceneCamera.getCameraPosition();
+	Color pixelColor;
+	int colorRed = 0, colorGreen = 0, colorBlue = 0;
+	
+	//Calcul intermediaire des pixels
+	for(unsigned int k=i; k<i+interpolationFactor; k++)
+	{
+		for(unsigned int l=j; l<j+interpolationFactor; l++)
+		{
+			pixelPoint[k-i][l-j] = screenToInterpolate.calcPixelLocation(k, l);
+			ray3D startRay(cameraPos, vec3D(cameraPos, pixelPoint[k-i][l-j]));
+			pixelColor = calcScenePixel(startRay, NULL, 0);
+						
+			colorRed += pixelColor.getRed();
+			colorGreen += pixelColor.getGreen();
+			colorBlue += pixelColor.getBlue();
+		}
+	}
+	//////////////////////////////////
+				
+	//Calcul de la moyenne des couleurs calculees et entree dans le tableau
+	colorRed /= (interpolationFactor * interpolationFactor);
+	colorBlue /= (interpolationFactor * interpolationFactor);
+	colorGreen /= (interpolationFactor * interpolationFactor);
+	return Color(colorRed, colorGreen, colorBlue);
 }
 
 Color** Scene::calcScenePicture(bool interpolate)
@@ -234,38 +266,14 @@ Color** Scene::calcScenePicture(bool interpolate)
 	{
 		//Creation de l'ecran a interpoler, et des objets temporaires necessaires
 		Ecran screenToInterpolate(this->ecran.getLeftTop(), this->ecran.getRightTop(), this->ecran.getLeftBottom(), hRes*interpolationFactor);
-		Point3D pixelPoint[interpolationFactor][interpolationFactor];
-		Color pixelColor;
-		
-		int colorRed = 0, colorGreen = 0, colorBlue = 0;
 		
 		////////////////////////////////////////
-		
+		#pragma omp parallel for schedule(dynamic,1) collapse(2)
 		for(unsigned int i=0; i<vRes*interpolationFactor; i += interpolationFactor)
 		{
 			for(unsigned int j=0; j<hRes*interpolationFactor; j += interpolationFactor)
 			{
-				//Calcul intermediaire des pixels
-				for(unsigned int k=i; k<i+interpolationFactor; k++)
-				{
-					for(unsigned int l=j; l<j+interpolationFactor; l++)
-					{
-						pixelPoint[k-i][l-j] = screenToInterpolate.calcPixelLocation(k, l);
-						ray3D startRay(cameraPos, vec3D(cameraPos, pixelPoint[k-i][l-j]));
-						pixelColor = calcScenePixel(startRay, NULL, 0);
-						
-						colorRed += pixelColor.getRed();
-						colorGreen += pixelColor.getGreen();
-						colorBlue += pixelColor.getBlue();
-					}
-				}
-				//////////////////////////////////
-				
-				//Calcul de la moyenne des couleurs calculees et entree dans le tableau
-				colorRed /= (interpolationFactor * interpolationFactor);
-				colorBlue /= (interpolationFactor * interpolationFactor);
-				colorGreen /= (interpolationFactor * interpolationFactor);
-				picture[i/interpolationFactor][j/interpolationFactor] = Color(colorRed, colorGreen, colorBlue);
+				picture[i/interpolationFactor][j/interpolationFactor] = interpolationLoop(i,j, screenToInterpolate);
 			}
 		}
 	}
@@ -274,6 +282,7 @@ Color** Scene::calcScenePicture(bool interpolate)
 	{
 		//Point3D stockant la position du pixel a calculer dans la scene
 		Point3D pixelPoint;
+		#pragma omp parallel for schedule(dynamic,1) collapse(2)
 		for(unsigned int i=0; i<vRes; i++)
 		{
 			for(unsigned int j=0; j<hRes; j++)

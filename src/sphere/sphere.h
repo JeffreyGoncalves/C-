@@ -7,13 +7,14 @@
 #include "color.h"
 #include "Object3D.h"
 #include "vec3D.h"
+#include "ray3D.h"
 
 class Sphere : public Object3D
 {
 	public:
 		//Constructeurs
 		Sphere();
-		Sphere(double x,double y, double z, double r, Color C, double ref);
+		Sphere(double x,double y, double z, double r, Color C, float ref, float a);
 		~Sphere(){}
 		///////////////
 		//Setters
