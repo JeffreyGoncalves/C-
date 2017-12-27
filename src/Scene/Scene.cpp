@@ -181,11 +181,11 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObject, unsigned int nb
 			rayNorm = rayNorm.normalize();
 			
 			double cosAlpha = objectCollided->calcNormToPoint(*objectCollisionPoint).dot(rayNorm),
-				   reflexFactor = abs(1.d - double(objectCollided->getObjectReflexionFactor()) - double(objectCollided->getObjectAlpha()));
+				   reflexFactor = fabs(1.d - double(objectCollided->getObjectReflexionFactor()) - double(objectCollided->getObjectAlpha()));
 				   
 			double colorR, colorB, colorG;
 			
-			cosAlpha = abs(cosAlpha);
+			cosAlpha = fabs(cosAlpha);
 			colorR = reflexFactor * double(sourceColor.getRed()) * double(objectColor.getRed()) * cosAlpha / 255.d, 
 			colorG = reflexFactor * double(sourceColor.getGreen()) * double(objectColor.getGreen()) * cosAlpha / 255.d,
 			colorB = reflexFactor * double(sourceColor.getBlue()) * double(objectColor.getBlue()) * cosAlpha / 255.d;

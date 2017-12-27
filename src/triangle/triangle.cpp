@@ -32,11 +32,11 @@ Triangle::Triangle(Point3D A, Point3D B, Point3D C, Color color, float ref, floa
 	if(P1P2.getNorm() != 0)
 	{
 		if(P1PExt.getNorm() != 0)
-			this->alphaP1 = acos( abs(P1P2.dot(P1PExt)) / (P1P2.getNorm() * P1PExt.getNorm()) );
+			this->alphaP1 = acos( fabs(P1P2.dot(P1PExt)) / (P1P2.getNorm() * P1PExt.getNorm()) );
 		else this->alphaP1 = 0;
 		
 		if(P2PExt.getNorm() != 0)
-			this->alphaP2 = acos( abs(P1P2.dot(P2PExt)) / (P1P2.getNorm() * P2PExt.getNorm()) );
+			this->alphaP2 = acos( fabs(P1P2.dot(P2PExt)) / (P1P2.getNorm() * P2PExt.getNorm()) );
 		else this->alphaP2 = 0;
 	}
 	else
@@ -99,7 +99,7 @@ Point3D* Triangle::detectCollision(ray3D ray)
 		vec3D P1PMiddle(this->P1, this->P1P2Middle);
 		double alphaT;
 		if(OP.getNorm() != 0 && PMiddleO.getNorm() != 0)
-			alphaT = acos(abs(OP.dot(PMiddleO)) / (OP.getNorm() * PMiddleO.getNorm()));
+			alphaT = acos(fabs(OP.dot(PMiddleO)) / (OP.getNorm() * PMiddleO.getNorm()));
 		else alphaT = 0;
 		
 		double toCompare = 0;
@@ -118,8 +118,8 @@ Point3D* Triangle::detectCollision(ray3D ray)
 			
 			if(P1P2.getNorm() != 0 && P1P.getNorm() != 0 && P2P1.getNorm() != 0 && P2P.getNorm() != 0)
 			{
-				if( abs(P2P1.dot(P1P)) / (P2P1.getNorm() * P1P.getNorm())  > cos(this->alphaP1) &&
-					abs(P1P2.dot(P2P)) / (P1P2.getNorm() * P2P.getNorm())  > cos(this->alphaP2) )
+				if( fabs(P2P1.dot(P1P)) / (P2P1.getNorm() * P1P.getNorm())  > cos(this->alphaP1) &&
+					fabs(P1P2.dot(P2P)) / (P1P2.getNorm() * P2P.getNorm())  > cos(this->alphaP2) )
 				{
 					return P;
 				}
