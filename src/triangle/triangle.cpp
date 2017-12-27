@@ -47,13 +47,11 @@ Triangle::Triangle(Point3D A, Point3D B, Point3D C, Color color, float ref, floa
 	///////////////////////////////////////
 	
 	//Calcul du point D intermediaire nous permettant de contruire le plan ayant pour cote P1P2
-	double beta = PI - alphaP1 - alphaP2;
 	double betaP1 = PI/2 - alphaP1;
-	double ratio;
-	if(beta != 0)
-		ratio = betaP1/beta; 		//Compris entre 0 et 1
-	else ratio = 0;
-	vec3D P1D = P1P2.times(ratio);
+	
+	vec3D P1D;
+	if(P1P2.getNorm() != 0)
+		P1D = P1P2.times(P1PExt.getNorm() * sin(betaP1) / P1P2.getNorm());
 	
 	Point3D D(P1D.getXCoor()+P1.getXCoor() ,P1D.getYCoor()+P1.getYCoor() , P1D.getZCoor()+P1.getZCoor() );
 	///////////////////////////////////////
@@ -107,27 +105,25 @@ Point3D* Triangle::detectCollision(ray3D ray)
 		double toCompare = 0;
 		if(cos(alphaT) != 0 && PMiddleO.getNorm()/cos(alphaT) <= sqrt(pow(PMiddleO.getNorm(), 2) + pow(P1PMiddle.getNorm(), 2)))
 			toCompare = PMiddleO.getNorm()/cos(alphaT);
-		else 
+		else if(sin(alphaT) != 0 && P1PMiddle.getNorm()/sin(alphaT) <= sqrt(pow(PMiddleO.getNorm(), 2) + pow(P1PMiddle.getNorm(), 2)))
 			toCompare = P1PMiddle.getNorm()/sin(alphaT);
-				
+		
 		if(OP.getNorm() <= toCompare)
 		{
-			return P;
-			/*
 			//Troisieme test : on sait que P est dans le plan P1P2P3P4 et on regarde si P est bien dans le triangle
 			vec3D P1P2(this->P1, this->P2),
 				  P1P(this->P1, *P),
 				  P2P1(this->P2, this->P1),
 				  P2P(this->P2, *P);
-				  
+			
 			if(P1P2.getNorm() != 0 && P1P.getNorm() != 0 && P2P1.getNorm() != 0 && P2P.getNorm() != 0)
 			{
-				if( acos( abs(P2P1.dot(P1P)) / (P2P1.getNorm() * P1P.getNorm()) ) <= this->alphaP1 &&
-					acos( abs(P1P2.dot(P2P)) / (P1P2.getNorm() * P2P.getNorm()) ) <= this->alphaP2 )
+				if( abs(P2P1.dot(P1P)) / (P2P1.getNorm() * P1P.getNorm())  > cos(this->alphaP1) &&
+					abs(P1P2.dot(P2P)) / (P1P2.getNorm() * P2P.getNorm())  > cos(this->alphaP2) )
 				{
 					return P;
 				}
-			}*/
+			}
 		}
 	}
 	
