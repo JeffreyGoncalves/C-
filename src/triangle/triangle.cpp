@@ -99,7 +99,7 @@ Point3D* Triangle::detectCollision(ray3D ray)
 		vec3D P1PMiddle(this->P1, this->P1P2Middle);
 		double alphaT;
 		if(OP.getNorm() != 0 && PMiddleO.getNorm() != 0)
-			alphaT = acos(fabs(OP.dot(PMiddleO)) / (OP.getNorm() * PMiddleO.getNorm()));
+			alphaT = acos(abs(OP.dot(PMiddleO)) / (OP.getNorm() * PMiddleO.getNorm()));
 		else alphaT = 0;
 		
 		double toCompare = 0;
