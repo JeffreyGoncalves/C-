@@ -1,4 +1,4 @@
-OBJ=main.o Object3D.o sphere.o Point3D.o vec3D.o ray3D.o color.o Scene.o Camera.o source.o ecran.o Controller.o
+OBJ=main.o Object3D.o sphere.o triangle.o Point3D.o vec3D.o ray3D.o color.o Scene.o Camera.o source.o ecran.o Controller.o
 CXX=g++
 LDFLAGS= -g -lfl -fopenmp
 
@@ -16,6 +16,7 @@ sub_make :
 	@cd Scene && $(MAKE) MAKEFLAGS=
 	@cd source && $(MAKE) MAKEFLAGS=
 	@cd sphere && $(MAKE) MAKEFLAGS=
+	@cd triangle && $(MAKE) MALEFLAGS=
 	@cd vec3D && $(MAKE) MAKEFLAGS=
 
 prog : 

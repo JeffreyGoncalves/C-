@@ -15,11 +15,12 @@
 400
 
 # background color
-155 155 155
+5 5 5
 # light source position
-100 120 0 255 255 255
+100 120 40 255 255 255
 
-# three spheres
-sphere: 90 95 60 9 250 0 0 0.6
-sphere: 100 110 60 9 0 250 0 0.6
-sphere: 110 95 60 9 0 0 250 0.6
+# three spheres + triangle (PointA(90, 95, 60), PointB(100, 110, 60), PointC(110, 95, 60), color(155, 0, 0), reflexion = 0
+# sphere: 90 95 60 9 250 0 0 0.6
+# sphere: 100 110 60 9 0 250 0 0.6
+# sphere: 110 95 60 9 0 0 250 0.6
+triangle: 90 90 60, 90 110 60, 130 90 60, 155 0 155, 0.6

@@ -8,6 +8,7 @@
 #include "Object3D.h"
 #include "Point3D.h"
 #include "sphere.h"
+#include "triangle.h"
 #include "color.h"
 #include "source.h"
 #include "Camera.h"
