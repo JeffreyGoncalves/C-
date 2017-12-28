@@ -1,6 +1,6 @@
 #include "sphere.h"
  
-Sphere::Sphere(double x, double y, double z, double r, Color C, float ref, float a) : Object3D(C, ref, a), center(x,y,z), radius(r) {}
+Sphere::Sphere(double x, double y, double z, double r, Color C, float ref, float a, float refrac) : Object3D(C, ref, a, refrac), center(x,y,z), radius(r) {}
 
 Sphere::Sphere() : Object3D(), center(), radius(0.d) {}
 

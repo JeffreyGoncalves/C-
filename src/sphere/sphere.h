@@ -14,7 +14,7 @@ class Sphere : public Object3D
 	public:
 		//Constructeurs
 		Sphere();
-		Sphere(double x,double y, double z, double r, Color C, float ref, float a);
+		Sphere(double x,double y, double z, double r, Color C, float ref, float a, float refrac);
 		~Sphere(){}
 		///////////////
 		//Setters

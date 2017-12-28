@@ -96,7 +96,6 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObject, unsigned int nb
 	Object3D *objectSelected = NULL, *objectCollided = NULL;
 	Point3D *p = NULL, *objectCollisionPoint = NULL;
 	vec3D previous, next;
-	bool isIlluminated = true;
 		 
 	
 	//On regarde si le rayon en parametre rentre en collision avec un objet
@@ -131,66 +130,117 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObject, unsigned int nb
 	{
 		//Renvoie la couleur de fond, en fonction de la presence d'une source lumineuse proche
 		//De base : return this->getBackgroundColor()
-		Color c = this->getBackgroundColor(),
-			  sourceColor = this->sceneLights.at(0)->getSourceColor();
+		Color c = this->getBackgroundColor();
+		
+		double logNewR, logNewG, logNewB;
+		double newR, newG, newB;
+		
+		for(unsigned int i=0; i<sceneLights.size(); i++)
+		{
+			Source *s = sceneLights.at(i);
+			
+			Color sourceColor = s->getSourceColor();
+			vec3D cameraToLightVec(this->sceneCamera.getCameraPosition(), s->getSourceLocation()),
+				  cameraToPixelVec(ray.getRayDirection());
 				  
-		vec3D cameraToLightVec(this->sceneCamera.getCameraPosition(), this->sceneLights.at(0)->getSourceLocation()),
-			  cameraToPixelVec(ray.getRayDirection());
-		cameraToLightVec = cameraToLightVec.normalize();
-		cameraToPixelVec = cameraToPixelVec.normalize();
+			cameraToLightVec = cameraToLightVec.normalize();
+			cameraToPixelVec = cameraToPixelVec.normalize();
+			
+			double cosT = fabs(cameraToLightVec.dot(cameraToPixelVec));
+			
+			logNewR = double(sourceColor.getRed()) * double(c.getRed()) * cosT / 255.d;
+			logNewG = double(sourceColor.getGreen()) * double(c.getGreen()) * cosT / 255.d;
+			logNewB = double(sourceColor.getBlue()) * double(c.getBlue()) * cosT / 255.d;
+			
+			newR += log2(logNewR > 1 ? logNewR : 0);
+			newG += log2(logNewG > 1 ? logNewG : 0);
+			newB += log2(logNewB > 1 ? logNewB : 0);
+		}
+				  
+		newR = pow(2, newR/double(sceneLights.size()));
+		newG = pow(2, newG/double(sceneLights.size()));
+		newB = pow(2, newB/double(sceneLights.size()));
 		
-		double cosT = cameraToLightVec.dot(cameraToPixelVec),
-			   newR = double(sourceColor.getRed()) * double(c.getRed()) / 255.d,
-			   newG = double(sourceColor.getGreen()) * double(c.getGreen()) / 255.d,
-			   newB = double(sourceColor.getBlue()) * double(c.getBlue()) / 255.d;
 		
-		return Color(int(newR), int(newG), int(newB)).times(sqrt(pow(cosT,2)));
+		return Color(int(newR), int(newG), int(newB));
 	}
 	
 	else if(objectCollided != NULL)
 	{
-		Source *s = sceneLights.at(0);
-		ray3D rayObjectToLight(*objectCollisionPoint, vec3D(*objectCollisionPoint, s->getSourceLocation()));
+		bool isIlluminated [sceneLights.size()];
+		int numberOfLightsCollided = 0;
 		ray3D rayReflected = objectCollided->calcReflexionRay(*objectCollisionPoint, ray);
-		//On verifie qu'aucun objet ne fait obstacle ici
-		for(unsigned int i=0; i<sceneObjects.size(); i++)
+		
+		//Pour chaque source lumineuse, on regarde si elle contribue a l'illumination de l'objet
+		for(unsigned int k=0; k<sceneLights.size(); k++)
 		{
-			objectSelected = sceneObjects.at(i);
-			p = objectSelected->detectCollision(rayObjectToLight);
-			if(p != NULL)
+			isIlluminated[k] = true;
+			Source *s = sceneLights.at(k);
+			ray3D rayObjectToLight(*objectCollisionPoint, vec3D(*objectCollisionPoint, s->getSourceLocation()));
+			//On verifie qu'aucun objet ne fait obstacle ici
+			for(unsigned int i=0; i<sceneObjects.size(); i++)
 			{
-				vec3D obstacle(*objectCollisionPoint, *p),
-					  objectToLightVec = rayObjectToLight.getRayDirection();
-				if(obstacle.getNorm() >= objectToLightVec.getNorm())
+				objectSelected = sceneObjects.at(i);
+				p = objectSelected->detectCollision(rayObjectToLight);
+				if(p != NULL)
 				{
-					isIlluminated = false;
-					break;
+					vec3D obstacle(*objectCollisionPoint, *p),
+						  objectToLightVec = rayObjectToLight.getRayDirection();
+					if(obstacle.getNorm() >= objectToLightVec.getNorm())
+					{
+						isIlluminated[k] = false;
+						break;
+					}
+					delete p;
 				}
-				delete p;
 			}
+			if(isIlluminated[k])numberOfLightsCollided++;
 		}
+		
 		///////////////////////////////////////////////
 		
-		if(isIlluminated && nb_rec <= nb_max_recursions)
+		if(numberOfLightsCollided > 0 && nb_rec <= nb_max_recursions)
 		{
-			//Couleur renvoyee
-			Color sourceColor = s->getSourceColor();
 			Color objectColor = objectCollided->getObjectColor();
+			double cosAlpha, reflexFactor;
+			double logColorR = 0, logColorG = 0, logColorB = 0;
+			double colorR = 0, colorG = 0, colorB = 0;
 			
-			vec3D rayNorm(*objectCollisionPoint, s->getSourceLocation());
-			rayNorm = rayNorm.normalize();
+			//Moyenne logarithmique (base 2) des contributions lumineuses
+			for(unsigned int i=0; i<sceneLights.size(); i++)
+			{
+				if(isIlluminated[i])
+				{
+					Source *s = sceneLights.at(i);
+					
+					Color actualSourceColor = s->getSourceColor();
+					vec3D rayNorm(*objectCollisionPoint, s->getSourceLocation());
+				
+					rayNorm = rayNorm.normalize();
+				
+					//Calcul du cosinus et du facteur 1-Reflexion-Transparence
+					cosAlpha = fabs(objectCollided->calcNormToPoint(*objectCollisionPoint).dot(rayNorm));
+					reflexFactor = fabs(1.d - double(objectCollided->getObjectReflexionFactor()) - double(objectCollided->getObjectAlpha()));
+				
+					logColorR = reflexFactor * double(actualSourceColor.getRed()) * double(objectColor.getRed()) * cosAlpha / 255.d, 
+					logColorG = reflexFactor * double(actualSourceColor.getGreen()) * double(objectColor.getGreen()) * cosAlpha / 255.d,
+					logColorB = reflexFactor * double(actualSourceColor.getBlue()) * double(objectColor.getBlue()) * cosAlpha / 255.d;
+					
+					colorR += log2(logColorR > 1 ? logColorR : 1);
+					colorG += log2(logColorG > 1 ? logColorG : 1);
+					colorB += log2(logColorB > 1 ? logColorB : 1);
+				}
+			}
+			colorR /= double(numberOfLightsCollided);
+			colorG /= double(numberOfLightsCollided);
+			colorB /= double(numberOfLightsCollided);
 			
-			double cosAlpha = objectCollided->calcNormToPoint(*objectCollisionPoint).dot(rayNorm),
-				   reflexFactor = fabs(1.d - double(objectCollided->getObjectReflexionFactor()) - double(objectCollided->getObjectAlpha()));
-				   
-			double colorR, colorB, colorG;
+			colorR = pow(2, colorR);
+			colorG = pow(2, colorG);
+			colorB = pow(2, colorB);
 			
-			cosAlpha = fabs(cosAlpha);
-			colorR = reflexFactor * double(sourceColor.getRed()) * double(objectColor.getRed()) * cosAlpha / 255.d, 
-			colorG = reflexFactor * double(sourceColor.getGreen()) * double(objectColor.getGreen()) * cosAlpha / 255.d,
-			colorB = reflexFactor * double(sourceColor.getBlue()) * double(objectColor.getBlue()) * cosAlpha / 255.d;
 			
-			delete objectCollisionPoint;   
+			delete objectCollisionPoint;  
 			return Color(colorR, colorG, colorB) + calcScenePixel(rayReflected, objectCollided, nb_rec+1).times(double(objectCollided->getObjectReflexionFactor()))
 												 + calcScenePixel(ray, objectCollided, nb_rec+1).times(double(objectCollided->getObjectAlpha()));
 		}

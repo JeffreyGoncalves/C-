@@ -1,6 +1,6 @@
 #include "triangle.h"
 
-Triangle::Triangle(Point3D A, Point3D B, Point3D C, Color color, float ref, float a) : Object3D(color, ref, a)
+Triangle::Triangle(Point3D A, Point3D B, Point3D C, Color color, float ref, float a, float refrac) : Object3D(color, ref, a, refrac)
 {
 	//Determination du cote le plus long
 	double distAB = vec3D(A,B).getNorm(),

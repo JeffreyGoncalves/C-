@@ -43,7 +43,7 @@ Controller::Controller(string filename)
 	//Objets temporaires
 	Camera cam;
 	Point3D topL, topR, botL;
-	double doubleTemp[10];
+	double doubleTemp[11];
 	int intTemp[3];
 	
 	//Lecture du fichier s'il existe
@@ -51,6 +51,7 @@ Controller::Controller(string filename)
 	{
 		string currentLine;
 		int state = 0;
+		int partNotValid = -1;
 		
 		while(!fileToParse.eof() && isValid)
 		{
@@ -86,7 +87,11 @@ Controller::Controller(string filename)
 							cam = Camera(doubleTemp[0], doubleTemp[1], doubleTemp[2]);
 							state++;
 						}
-						else isValid = false;
+						else 
+						{
+							isValid = false;
+							partNotValid = 0;
+						}
 						break;
 					///////////////////////////////////////
 					case 1:
@@ -98,7 +103,11 @@ Controller::Controller(string filename)
 							topL = Point3D(doubleTemp[0], doubleTemp[1], doubleTemp[2]);
 							state++;
 						}
-						else isValid = false;
+						else 
+						{
+							isValid = false;
+							partNotValid = 1;
+						}
 						break;
 					///////////////////////////////////////////////////////////
 					case 2:
@@ -110,7 +119,11 @@ Controller::Controller(string filename)
 							topR = Point3D(doubleTemp[0], doubleTemp[1], doubleTemp[2]);
 							state++;
 						}
-						else isValid = false;
+						else 
+						{
+							isValid = false;
+							partNotValid = 2;
+						}
 						break;
 					///////////////////////////////////////////////////////////
 					case 3:
@@ -122,7 +135,11 @@ Controller::Controller(string filename)
 							botL = Point3D(doubleTemp[0], doubleTemp[1], doubleTemp[2]);
 							state++;
 						}
-						else isValid = false;
+						else 
+						{
+							isValid = false;
+							partNotValid = 3;
+						}
 						break;
 					///////////////////////////////////////////////////////////
 					case 4:
@@ -133,7 +150,11 @@ Controller::Controller(string filename)
 							actualScene = new Scene(cam, e);
 							state++;
 						}
-						else isValid = false;
+						else 
+						{
+							isValid = false;
+							partNotValid = 4;
+						}
 						break;
 					///////////////////////////////////////////////////////////
 					case 5:
@@ -145,11 +166,15 @@ Controller::Controller(string filename)
 							actualScene->setBackgroundColor(Color(intTemp[0], intTemp[1], intTemp[2]));
 							state++;
 						}
-						else isValid = false;
+						else 
+						{
+							isValid = false;
+							partNotValid = 5;
+						}
 						break;
 					///////////////////////////////////////////////////////////
 					case 6:
-					///////////		Ajout d'une lumiere				///////////
+					///////////		Ajout de la lumiere principale		///////////
 						if(tokens.size() == 6 && istringstream(tokens[0]) >> doubleTemp[0] && 
 												 istringstream(tokens[1]) >> doubleTemp[1] && 
 												 istringstream(tokens[2]) >> doubleTemp[2] &&
@@ -161,14 +186,37 @@ Controller::Controller(string filename)
 																   Color(intTemp[0], intTemp[1], intTemp[2])));
 							state++;
 						}
-						else isValid = false;
+						else 
+						{
+							isValid = false;
+							partNotValid = 6;
+						}
 						break;
 					///////////////////////////////////////////////////////////
 					case 7:
-					///////////		Ajout d'une sphere			///////////
-						if(tokens.size() >= 1 && !(tokens[0].compare("sphere")))
+					///////////		Ajout d'une source de lumiere supplementaire //////////
+						if(tokens.size() >= 1 && !(tokens[0].compare("source")))
 						{
-							if(tokens.size() == 9 && istringstream(tokens[1]) >> doubleTemp[0] && 
+							if(tokens.size() == 7 && istringstream(tokens[1]) >> doubleTemp[0] && 
+												 istringstream(tokens[2]) >> doubleTemp[1] && 
+												 istringstream(tokens[3]) >> doubleTemp[2] &&
+												 istringstream(tokens[4]) >> intTemp[0] &&
+												 istringstream(tokens[5]) >> intTemp[1] &&
+												 istringstream(tokens[6]) >> intTemp[2])
+							{
+								actualScene->addLightSource(new Source(Point3D(doubleTemp[0], doubleTemp[1], doubleTemp[2]), 
+																   Color(intTemp[0], intTemp[1], intTemp[2])));
+							}
+							else
+							{
+								isValid = false;
+								break;
+							}
+						}
+					///////////		Ajout d'une sphere			///////////
+						else if(tokens.size() >= 1 && !(tokens[0].compare("sphere")))
+						{
+							if(tokens.size() >= 9 && istringstream(tokens[1]) >> doubleTemp[0] && 
 												 istringstream(tokens[2]) >> doubleTemp[1] && 
 												 istringstream(tokens[3]) >> doubleTemp[2] &&
 												 istringstream(tokens[4]) >> doubleTemp[3] &&
@@ -177,13 +225,26 @@ Controller::Controller(string filename)
 												 istringstream(tokens[7]) >> intTemp[2] && 
 												 istringstream(tokens[8]) >> doubleTemp[4])
 							{
-								actualScene->addObject(new Sphere(doubleTemp[0], doubleTemp[1], doubleTemp[2], doubleTemp[3], Color(intTemp[0], intTemp[1], intTemp[2]), doubleTemp[4], 0.f));
+								if(tokens.size() == 9)
+									actualScene->addObject(new Sphere(doubleTemp[0], doubleTemp[1], doubleTemp[2], doubleTemp[3], Color(intTemp[0], intTemp[1], intTemp[2]), doubleTemp[4], 0.f, 1.f));
+								else if(tokens.size() == 10 &&  istringstream(tokens[9]) >> doubleTemp[5])
+									actualScene->addObject(new Sphere(doubleTemp[0], doubleTemp[1], doubleTemp[2], doubleTemp[3], Color(intTemp[0], intTemp[1], intTemp[2]), doubleTemp[4], doubleTemp[5], 1.f));
+								else
+								{
+									isValid = false;
+									break;
+								}
+							}
+							else
+							{
+								isValid = false;
+								break;
 							}
 						}
 						///////////		Ajout d'un triangle		///////////
 						else if(tokens.size() >= 1 && !(tokens[0].compare("triangle")))
 						{
-							if(tokens.size() == 14 && istringstream(tokens[1]) >> doubleTemp[0] && 
+							if(tokens.size() >= 14 && istringstream(tokens[1]) >> doubleTemp[0] && 
 												 istringstream(tokens[2]) >> doubleTemp[1] && 
 												 istringstream(tokens[3]) >> doubleTemp[2] &&
 												 istringstream(tokens[4]) >> doubleTemp[3] &&
@@ -197,10 +258,28 @@ Controller::Controller(string filename)
 												 istringstream(tokens[12]) >> intTemp[2] &&
 												 istringstream(tokens[13]) >> doubleTemp[9])
 							{
-								actualScene->addObject(new Triangle(Point3D(doubleTemp[0], doubleTemp[1], doubleTemp[2]), 
-																	Point3D(doubleTemp[3], doubleTemp[4], doubleTemp[5]), 
-																	Point3D(doubleTemp[6], doubleTemp[7], doubleTemp[8]), 
-																	Color(intTemp[0], intTemp[1], intTemp[2]), doubleTemp[9], 0));
+								if(tokens.size() == 14)
+									actualScene->addObject(new Triangle(Point3D(doubleTemp[0], doubleTemp[1], doubleTemp[2]), 
+																		Point3D(doubleTemp[3], doubleTemp[4], doubleTemp[5]), 
+																		Point3D(doubleTemp[6], doubleTemp[7], doubleTemp[8]), 
+																		Color(intTemp[0], intTemp[1], intTemp[2]), doubleTemp[9], 0.f, 1.f));
+																		
+								else if(tokens.size() == 15 && istringstream(tokens[14]) >> doubleTemp[10])
+									actualScene->addObject(new Triangle(Point3D(doubleTemp[0], doubleTemp[1], doubleTemp[2]), 
+																		Point3D(doubleTemp[3], doubleTemp[4], doubleTemp[5]), 
+																		Point3D(doubleTemp[6], doubleTemp[7], doubleTemp[8]), 
+																		Color(intTemp[0], intTemp[1], intTemp[2]), doubleTemp[9], doubleTemp[10], 1.f));
+																		
+								else
+								{
+									isValid = false;
+									break;
+								}
+							}
+							else
+							{
+								isValid = false;
+								break;
 							}
 						}
 						else isValid = false;
@@ -215,6 +294,42 @@ Controller::Controller(string filename)
 				{
 					actualScene = NULL;
 					cerr << "Erreur : le document a parser n'est pas valide..." << endl;
+					if(partNotValid == -1)cerr << "l'erreur se trouve au niveau de la declaration des objets 3D" << endl;
+					if(partNotValid == 0)
+					{
+						cerr << "l'erreur se trouve au niveau du positionnement de la camera (ligne 1)" << endl;
+						cerr << "Ecrire plutot \"100 100 0\" par exemple (position x=100, y=100, z=0)" << endl;
+					}
+					if(partNotValid == 1)
+					{
+						cerr << "l'erreur se trouve au niveau du point gauche haut de l'ecran (ligne 2)" << endl;
+						cerr << "Ecrire plutot \"110 110 30\" par exemple (position x=110, y=110, z=30)" << endl;
+					}
+					if(partNotValid == 2)
+					{
+						cerr << "l'erreur se trouve au niveau du point droit haut de l'ecran (ligne 3)" << endl;
+						cerr << "Ecrire plutot \"90 110 30\" par exemple (position x=90, y=110, z=30)" << endl;
+					}
+					if(partNotValid == 3)
+					{
+						cerr << "l'erreur se trouve au niveau du point gauche bas de l'ecran (ligne 4)" << endl;
+						cerr << "Ecrire plutot \"110 90 30\" par exemple (position x=110, y=90, z=30)" << endl;
+					}
+					if(partNotValid == 4)
+					{
+						cerr << "l'erreur se trouve au niveau de l'entree de la resolution de l'ecran (ligne 5)" << endl;
+						cerr << "Ecrire plutot \"400\" par exemple (resolution horizontale de 400 pixels)" << endl;
+					}
+					if(partNotValid == 5)
+					{
+						cerr << "l'erreur se trouve au niveau de l'entree de la couleur du fond (ligne 6)" << endl;
+						cerr << "Ecrire plutot \"5 5 5\" par exemple (couleur du fond : red = 5/255, green = 5/255, blue = 5/255)" << endl;
+					}
+					if(partNotValid == 6)
+					{
+						cerr << "l'erreur se trouve au niveau de l'entree de la position/couleur de la source lumineuse principale (ligne 7)" << endl;
+						cerr << "Ecrire plutot \"100 120 40 255 255 255\" par exemple (position x=100, y=120, z=40 et couleur : red = 255/255, green = 255/255, blue = 255/255)" << endl;
+					}
 				}
 			}
 		}

@@ -12,7 +12,7 @@ class Triangle : public Object3D
 {
 	public :
 		//Constructeurs
-		Triangle(Point3D A, Point3D B, Point3D C, Color color, float ref, float a);
+		Triangle(Point3D A, Point3D B, Point3D C, Color color, float ref, float a, float refrac);
 		///////////////
 		//Getters
 		inline Point3D const& getP1() {return this->P1;}
