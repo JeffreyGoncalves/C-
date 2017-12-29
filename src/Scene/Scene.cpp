@@ -152,9 +152,9 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObject, unsigned int nb
 			logNewG = double(sourceColor.getGreen()) * double(c.getGreen()) * cosT / 255.d;
 			logNewB = double(sourceColor.getBlue()) * double(c.getBlue()) * cosT / 255.d;
 			
-			newR += log2(logNewR > 1 ? logNewR : 0);
-			newG += log2(logNewG > 1 ? logNewG : 0);
-			newB += log2(logNewB > 1 ? logNewB : 0);
+			newR += log2(logNewR > 1 ? logNewR : 1);
+			newG += log2(logNewG > 1 ? logNewG : 1);
+			newB += log2(logNewB > 1 ? logNewB : 1);
 		}
 				  
 		newR = pow(2, newR/double(sceneLights.size()));
