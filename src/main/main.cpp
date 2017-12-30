@@ -130,7 +130,6 @@ int main(int argc, char** argv)
 				controller.setNbMaxRecursions(nbMaxRecursion);
 		
 			//Calcul de l'image
-			cout << "Calculating picture..." << endl;
 			controller.calcPicture(interpolate);
 		
 			//Entree des informations dans un fichier

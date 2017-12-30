@@ -3,11 +3,11 @@ CXXFLAGS=-Wall -ansi -I./ -g -fopenmp
 
 all : cpy Camera.o clean
 
-cpy : 
+cpy :: 
 	@cp -f ../Point3D/*.h .
 
 Camera.o : Camera.cpp
 	$(CXX) $(CXXFLAGS) -o ../$@ -c $^
 	
-clean : 
+clean :: 
 	@rm -rf Point3D.h

@@ -132,8 +132,8 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObject, unsigned int nb
 		//De base : return this->getBackgroundColor()
 		Color c = this->getBackgroundColor();
 		
-		double logNewR, logNewG, logNewB;
-		double newR, newG, newB;
+		double logNewR=0, logNewG=0, logNewB=0;
+		double newR=0, newG=0, newB=0;
 		
 		for(unsigned int i=0; i<sceneLights.size(); i++)
 		{
@@ -298,27 +298,30 @@ Color** Scene::calcScenePicture(bool interpolate)
 {
 	//Initialisation
 	unsigned int hRes = this->ecran.getHorizontalResolution(),
-				 vRes = this->ecran.getVerticalResolution();
+				 vRes = this->ecran.getVerticalResolution();		 
 	
-	//Creation du tableau representant l'image
+	//Initialisation du tableau contenant les donnees de l'image
+	std::cout << "Initialization of array for entering picture values ..." << std::endl;
 	Color **picture = new Color*[vRes];
 	*picture = new Color[vRes * hRes];
 	
 	for(unsigned int i=1; i<vRes; i++)
 		picture[i] = picture[i-1] + hRes;
-		
+	//////////////////////////////////////////
+	
 	//Point3D stockant la position de la camera
 	Point3D cameraPos = this->sceneCamera.getCameraPosition();
 	//////////////////////////////////////////
 	
 	//Si on demande l'interpolation
+	std::cout << "Calculating and entering values in the array ..." << std::endl;
 	if(interpolate)
 	{
 		//Creation de l'ecran a interpoler, et des objets temporaires necessaires
 		Ecran screenToInterpolate(this->ecran.getLeftTop(), this->ecran.getRightTop(), this->ecran.getLeftBottom(), hRes*interpolationFactor);
 		
 		////////////////////////////////////////
-		#pragma omp parallel for schedule(dynamic,1) collapse(2)
+		#pragma omp parallel for schedule(dynamic,2) collapse(2) ordered
 		for(unsigned int i=0; i<vRes*interpolationFactor; i += interpolationFactor)
 		{
 			for(unsigned int j=0; j<hRes*interpolationFactor; j += interpolationFactor)
@@ -332,7 +335,7 @@ Color** Scene::calcScenePicture(bool interpolate)
 	{
 		//Point3D stockant la position du pixel a calculer dans la scene
 		Point3D pixelPoint;
-		#pragma omp parallel for schedule(dynamic,1) collapse(2)
+		#pragma omp parallel for schedule(dynamic,2) collapse(2) ordered
 		for(unsigned int i=0; i<vRes; i++)
 		{
 			for(unsigned int j=0; j<hRes; j++)

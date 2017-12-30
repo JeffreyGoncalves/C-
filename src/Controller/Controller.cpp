@@ -293,42 +293,42 @@ Controller::Controller(string filename)
 				if(!isValid)
 				{
 					actualScene = NULL;
-					cerr << "Erreur : le document a parser n'est pas valide..." << endl;
-					if(partNotValid == -1)cerr << "l'erreur se trouve au niveau de la declaration des objets 3D" << endl;
+					cerr << "Error : the file to parse is not valid..." << endl;
+					if(partNotValid == -1)cerr << "the error is caused by the declaration of a Object3D or a secondary light source" << endl;
 					if(partNotValid == 0)
 					{
-						cerr << "l'erreur se trouve au niveau du positionnement de la camera (ligne 1)" << endl;
-						cerr << "Ecrire plutot \"100 100 0\" par exemple (position x=100, y=100, z=0)" << endl;
+						cerr << "The error is caused by the placement of the camera line (line 1)" << endl;
+						cerr << "Replace this by \"100 100 0\" for example (position x=100, y=100, z=0)" << endl;
 					}
 					if(partNotValid == 1)
 					{
-						cerr << "l'erreur se trouve au niveau du point gauche haut de l'ecran (ligne 2)" << endl;
-						cerr << "Ecrire plutot \"110 110 30\" par exemple (position x=110, y=110, z=30)" << endl;
+						cerr << "The error is caused by the placement of the left top point of the screen line (line 2)" << endl;
+						cerr << "Replace this by \"110 110 30\" for example (position x=110, y=110, z=30)" << endl;
 					}
 					if(partNotValid == 2)
 					{
-						cerr << "l'erreur se trouve au niveau du point droit haut de l'ecran (ligne 3)" << endl;
-						cerr << "Ecrire plutot \"90 110 30\" par exemple (position x=90, y=110, z=30)" << endl;
+						cerr << "The error is caused by the placement of the right top point of the screen line (line 3)" << endl;
+						cerr << "Replace this by \"90 110 30\" for example (position x=90, y=110, z=30)" << endl;
 					}
 					if(partNotValid == 3)
 					{
-						cerr << "l'erreur se trouve au niveau du point gauche bas de l'ecran (ligne 4)" << endl;
-						cerr << "Ecrire plutot \"110 90 30\" par exemple (position x=110, y=90, z=30)" << endl;
+						cerr << "The error is caused by the placement of the left bottom point of the screen line (line 4)" << endl;
+						cerr << "Replace this by \"110 90 30\" for example (position x=110, y=90, z=30)" << endl;
 					}
 					if(partNotValid == 4)
 					{
-						cerr << "l'erreur se trouve au niveau de l'entree de la resolution de l'ecran (ligne 5)" << endl;
-						cerr << "Ecrire plutot \"400\" par exemple (resolution horizontale de 400 pixels)" << endl;
+						cerr << "The error is caused by the horizontal resolution line (line 5)" << endl;
+						cerr << "Replace this by \"400\" for example (horizontal resolution of 400 pixels)" << endl;
 					}
 					if(partNotValid == 5)
 					{
-						cerr << "l'erreur se trouve au niveau de l'entree de la couleur du fond (ligne 6)" << endl;
-						cerr << "Ecrire plutot \"5 5 5\" par exemple (couleur du fond : red = 5/255, green = 5/255, blue = 5/255)" << endl;
+						cerr << "The error is caused by the background color line (line 6)" << endl;
+						cerr << "Replace this by \"5 5 5\" for example (background color : red = 5/255, green = 5/255, blue = 5/255)" << endl;
 					}
 					if(partNotValid == 6)
 					{
-						cerr << "l'erreur se trouve au niveau de l'entree de la position/couleur de la source lumineuse principale (ligne 7)" << endl;
-						cerr << "Ecrire plutot \"100 120 40 255 255 255\" par exemple (position x=100, y=120, z=40 et couleur : red = 255/255, green = 255/255, blue = 255/255)" << endl;
+						cerr << "The error is caused by the line of the placement/color of the principal light source (line 7)" << endl;
+						cerr << "Replace this by \"100 120 40 255 255 255\" for example (position x=100, y=120, z=40 et color : red = 255/255, green = 255/255, blue = 255/255)" << endl;
 					}
 				}
 			}
@@ -338,7 +338,7 @@ Controller::Controller(string filename)
 	else 
 	{
 		actualScene = NULL;
-		cerr << "Erreur : le fichier n'existe pas ou est corrompu..." << endl;
+		cerr << "Error : file does not exist or is corrupt..." << endl;
 	}
 }
 
