@@ -12,6 +12,7 @@ class Triangle : public Object3D
 {
 	public :
 		//Constructeurs
+		Triangle(){}
 		Triangle(Point3D A, Point3D B, Point3D C, Color color, float ref, float a, float refrac);
 		///////////////
 		//Getters

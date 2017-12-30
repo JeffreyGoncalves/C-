@@ -22,9 +22,10 @@
 
 #sphere : centre(90, 95, 60) + radius (9) + couleur(250, 0, 0) + facteur de reflexion(0.6) + (optionnel)facteur de transparence (1)
 #triangle (PointA(90, 95, 60), PointB(100, 110, 60), PointC(110, 95, 60), color(155, 0, 0), reflexion = 0.6
-source: 100 120 200 255 255 255
-sphere: 90 95 60 9 250 0 0 0.6
-sphere: 100 110 60 9 0 250 0 0.6 
-sphere: 110 95 60 9 0 0 250 0.6
-#sphere: 100 110 80 9 255 0 255 0.6
-#triangle: 90 90 60 90 110 60 120 90 60 0 255 0 0.6 1
+# source: 100 120 200 255 255 255
+# sphere: 90 95 60 9 250 0 0 0.6
+# sphere: 100 110 60 9 0 250 0 0.6 
+pyramide: 90 95 60 100 110 60 110 95 60 100 100 50 255 0 255 0.6 1
+# sphere: 110 95 60 9 0 0 250 0.6
+# sphere: 100 110 80 9 255 0 255 0.6
+# triangle: 90 90 60 90 110 60 120 90 60 0 255 0 0.6 1

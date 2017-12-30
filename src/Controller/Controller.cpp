@@ -43,7 +43,7 @@ Controller::Controller(string filename)
 	//Objets temporaires
 	Camera cam;
 	Point3D topL, topR, botL;
-	double doubleTemp[11];
+	double doubleTemp[14];
 	int intTemp[3];
 	
 	//Lecture du fichier s'il existe
@@ -269,6 +269,52 @@ Controller::Controller(string filename)
 																		Point3D(doubleTemp[3], doubleTemp[4], doubleTemp[5]), 
 																		Point3D(doubleTemp[6], doubleTemp[7], doubleTemp[8]), 
 																		Color(intTemp[0], intTemp[1], intTemp[2]), doubleTemp[9], doubleTemp[10], 1.f));
+																		
+								else
+								{
+									isValid = false;
+									break;
+								}
+							}
+							else
+							{
+								isValid = false;
+								break;
+							}
+						}
+						///////////		Ajout d'une pyramide a base triangulaire	///////////
+						else if(tokens.size() >= 1 && !(tokens[0].compare("pyramide")))
+						{
+							if(tokens.size() >= 17 && istringstream(tokens[1]) >> doubleTemp[0] && 
+												 istringstream(tokens[2]) >> doubleTemp[1] && 
+												 istringstream(tokens[3]) >> doubleTemp[2] &&
+												 istringstream(tokens[4]) >> doubleTemp[3] &&
+												 istringstream(tokens[5]) >> doubleTemp[4] &&
+												 istringstream(tokens[6]) >> doubleTemp[5] &&
+												 istringstream(tokens[7]) >> doubleTemp[6] && 
+												 istringstream(tokens[8]) >> doubleTemp[7] &&
+												 istringstream(tokens[9]) >> doubleTemp[8] && 
+												 istringstream(tokens[10]) >> doubleTemp[9] &&
+												 istringstream(tokens[11]) >> doubleTemp[10] &&
+												 istringstream(tokens[12]) >> doubleTemp[11] && 
+												 istringstream(tokens[13]) >> intTemp[0] && 
+												 istringstream(tokens[14]) >> intTemp[1] &&
+												 istringstream(tokens[15]) >> intTemp[2] &&
+												 istringstream(tokens[16]) >> doubleTemp[12])
+							{
+								if(tokens.size() == 17)
+									actualScene->addObject(new TPyramid(Point3D(doubleTemp[0], doubleTemp[1], doubleTemp[2]), 
+																		Point3D(doubleTemp[3], doubleTemp[4], doubleTemp[5]), 
+																		Point3D(doubleTemp[6], doubleTemp[7], doubleTemp[8]), 
+																		Point3D(doubleTemp[9], doubleTemp[10], doubleTemp[11]),
+																		Color(intTemp[0], intTemp[1], intTemp[2]), doubleTemp[12], 0.f, 1.f));
+																		
+								else if(tokens.size() == 18 && istringstream(tokens[17]) >> doubleTemp[13])
+									actualScene->addObject(new TPyramid(Point3D(doubleTemp[0], doubleTemp[1], doubleTemp[2]), 
+																		Point3D(doubleTemp[3], doubleTemp[4], doubleTemp[5]), 
+																		Point3D(doubleTemp[6], doubleTemp[7], doubleTemp[8]),
+																		Point3D(doubleTemp[9], doubleTemp[10], doubleTemp[11]), 
+																		Color(intTemp[0], intTemp[1], intTemp[2]), doubleTemp[12], doubleTemp[13], 1.f));
 																		
 								else
 								{

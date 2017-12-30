@@ -13,7 +13,6 @@
 #include "ray3D.h"
 #include "vec3D.h"
 #include "color.h"
-#include "sphere.h"
 #include "source.h"
 #include "Camera.h"
 #include "ecran.h"
