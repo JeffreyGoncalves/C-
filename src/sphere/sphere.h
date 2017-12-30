@@ -15,7 +15,7 @@ class Sphere : public Object3D
 		//Constructeurs
 		Sphere();
 		Sphere(double x,double y, double z, double r, Color C, float ref, float a, float refrac);
-		~Sphere(){}
+		inline ~Sphere(){}
 		///////////////
 		//Setters
 		void setCenter(double x, double y , double z);

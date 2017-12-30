@@ -194,8 +194,29 @@ Controller::Controller(string filename)
 						break;
 					///////////////////////////////////////////////////////////
 					case 7:
+					///////////		reglage de la luminosite ambiante		 //////////
+						if(tokens.size() == 4 && !(tokens[0].compare("ambient-light")))
+						{
+							if(istringstream(tokens[1]) >> intTemp[0] &&
+							   istringstream(tokens[2]) >> intTemp[1] &&
+							   istringstream(tokens[3]) >> intTemp[2])
+							{
+								if(intTemp[0] >= 0 && intTemp[0] < 256 && intTemp[1] >= 0 && intTemp[1] < 256 && intTemp[2] >= 0 && intTemp[2] < 256 )
+									actualScene->setAmbientLight(Color(intTemp[0], intTemp[1], intTemp[2]));
+								else
+								{
+									isValid = false;
+									break;
+								}
+							}
+							else
+							{
+								isValid = false;
+								break;
+							}
+						}
 					///////////		Ajout d'une source de lumiere supplementaire //////////
-						if(tokens.size() >= 1 && !(tokens[0].compare("source")))
+						else if(tokens.size() >= 1 && !(tokens[0].compare("source")))
 						{
 							if(tokens.size() == 7 && istringstream(tokens[1]) >> doubleTemp[0] && 
 												 istringstream(tokens[2]) >> doubleTemp[1] && 

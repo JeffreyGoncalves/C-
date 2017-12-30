@@ -20,6 +20,9 @@
 # light source position
 100 120 40 255 255 255
 
+# ambient light modification : red
+ambient-light: 45 0 0
+
 #sphere : centre(90, 95, 60) + radius (9) + couleur(250, 0, 0) + facteur de reflexion(0.6) + (optionnel)facteur de #transparence (1)
 #triangle (PointA(90, 95, 60), PointB(100, 110, 60), PointC(110, 95, 60), color(155, 0, 0), reflexion = 0.6
 sphere: 90 105 60 9 1 1 1 0.6 

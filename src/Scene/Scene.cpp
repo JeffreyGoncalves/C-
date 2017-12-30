@@ -1,8 +1,11 @@
 #include "Scene.h"
 
+const Color Scene::defaultAmbientLight = Color(25,25,25);
+
 Scene::Scene(Camera cam, Ecran e) : sceneObjects(), sceneLights(), backgroundColor(0, 0, 0), 
 									sceneCamera(cam), ecran(e), nb_max_recursions(Scene::default_nb_max_recursions),
-									interpolationFactor(Scene::defaultInterpolationFactor) {}
+									interpolationFactor(Scene::defaultInterpolationFactor),
+									ambientLight(Scene::defaultAmbientLight) {}
 
 Scene::Scene(Color c, Camera cam, Ecran e) : sceneObjects(), sceneLights(), backgroundColor(c), 
 											 sceneCamera(cam), ecran(e), nb_max_recursions(Scene::default_nb_max_recursions),
@@ -40,31 +43,27 @@ void Scene::addObject(Object3D *o)
 	this->sceneObjects.push_back(o);
 }
 
-bool Scene::removeObject(Object3D *o)
-{
-	sceneObjects.erase(std::remove(sceneObjects.begin(), sceneObjects.end(), o), sceneObjects.end());
-	return false;
-}
-
-bool Scene::removeObject(unsigned int i)
-{
-	if(i >= 0 && i<sceneObjects.size())
-	{
-		Object3D *o = sceneObjects[i];
-		sceneObjects.erase(std::remove(sceneObjects.begin(), sceneObjects.end(), sceneObjects[i]), sceneObjects.end());
-
-		delete o;
-		return true;
-	}
-	else return false;
-}
-
 Object3D* const Scene::getObject(int i)
 {
 	return sceneObjects[i];
 }
 
 //////////////////////////////////////////////////////////
+//			Methodes relatives aux sources				//
+//////////////////////////////////////////////////////////
+
+void Scene::addLightSource(Source *newLight)
+{
+	this->sceneLights.push_back(newLight);
+}
+
+Source* const Scene::getLightSource(int i)
+{
+	return sceneLights[i];
+}
+		
+//////////////////////////////////////////////////////////
+//					Autres Setters						//
 //////////////////////////////////////////////////////////
 
 void Scene::setBackgroundColor(Color newBackColor)
@@ -77,15 +76,6 @@ void Scene::setCamera(Camera newCamera)
 	this->sceneCamera = newCamera;
 }
 
-void Scene::addLightSource(Source *newLight)
-{
-	this->sceneLights.push_back(newLight);
-}
-
-Source* const Scene::getLightSource(int i)
-{
-	return sceneLights[i];
-}
 
 //////////////////////////////////////////////////////////
 //			Methodes de calcul de l'image				//
@@ -253,14 +243,14 @@ Color Scene::calcScenePixel(ray3D ray, Object3D *previousObject, unsigned int nb
 		else
 		{
 			delete objectCollisionPoint;
-			return Color(25,25,25);
+			return this->ambientLight;
 		}
 	}
 	
 	else //Cas ou objectCollided == NULL et nb_rec != 0
 	{
 		delete objectCollisionPoint;
-		return Color(25,25,25);//Si nb_rec != 0 && objectCollided == NULL
+		return this->ambientLight;//Si nb_rec != 0 && objectCollided == NULL
 	}
 }
 

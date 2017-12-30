@@ -2,7 +2,7 @@
 #define SCENE_H
 
 #include <iostream>
-#include <cmath>
+#include <math.h>
 #include <vector>
 #include <algorithm>
 #include "Object3D.h"
@@ -25,13 +25,9 @@ class Scene
 		
 		//Gestion des objets
 		void addObject(Object3D *o);
-		bool removeObject(Object3D *o);
-		bool removeObject(unsigned int i);
 		
 		//Gestion des lumieres
 		void addLightSource(Source *newLight);
-		//void removeLight(light lightToRemove);
-		//void removeLight(int i);
 		
 		//Getters
 		Object3D* const getObject(int i);
@@ -46,8 +42,9 @@ class Scene
 		//////////////////////////////////
 		
 		//Static setter for interpolation factor
-		void setInterpolationFactor(unsigned int factor){if(factor != 0) interpolationFactor = factor;}
-		void setNbMaxRecursions(unsigned int factor){nb_max_recursions = factor;}
+		inline void setInterpolationFactor(unsigned int factor){if(factor != 0) interpolationFactor = factor;}
+		inline void setNbMaxRecursions(unsigned int factor){nb_max_recursions = factor;}
+		inline void setAmbientLight(Color newAmbientLight){ambientLight = newAmbientLight;}
 		
 		//Methode de calcul d'image
 		Color** calcScenePicture(bool interpolate);
@@ -66,10 +63,12 @@ class Scene
 		//Constantes statiques : parametres par defaut
 		static const int default_nb_max_recursions = 1;					//Nombre maximal de passes pour le calcul de la reflexion speculaire
 		static const unsigned int defaultInterpolationFactor = 2;		//Facteur d'interpolation
+		static const Color defaultAmbientLight;
 		
 		//Parametres de la scene
 		unsigned int nb_max_recursions;
 		unsigned int interpolationFactor;
+		Color ambientLight;
 };
 
 #endif

@@ -7,9 +7,9 @@ class Camera
 {
 	public : 
 		//Constructeurs
-		Camera() : cameraPosition(){}
-		Camera(Point3D camPoint) : cameraPosition(camPoint){}
-		Camera(double x_cam, double y_cam, double z_cam) : cameraPosition(x_cam, y_cam, z_cam){}
+		inline Camera() : cameraPosition(){}
+		inline Camera(Point3D camPoint) : cameraPosition(camPoint){}
+		inline Camera(double x_cam, double y_cam, double z_cam) : cameraPosition(x_cam, y_cam, z_cam){}
 		///////////////
 		//Getters
 		Point3D const& getCameraPosition() const;
