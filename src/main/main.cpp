@@ -142,7 +142,7 @@ int main(int argc, char** argv)
 		cout << "Usage : ./prog [options] fileToParse pictureName" << endl;
 		cout << "Options :" << endl; 
 		cout << "-i [int] : interpolate to int factor >= 2 (set to 2 by default) " << endl;
-		cout << "-p [int] : change count of specular reflexion passes (set to 3 by default) " << endl;
+		cout << "-p [int] : change count of specular reflexion passes (set to 1 by default) " << endl;
 	}
 	
 	return 0;
